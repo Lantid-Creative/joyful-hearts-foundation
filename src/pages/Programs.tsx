@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
+import DonationProgress from "@/components/shared/DonationProgress";
+import { Button } from "@/components/ui/button";
 import { 
   BookOpen, 
   Heart, 
@@ -24,6 +27,8 @@ const programs = [
     impact: "Providing books, school supplies, and educational materials to hundreds of children",
     image: distribution,
     color: "bg-primary",
+    raised: 125000,
+    goal: 500000,
   },
   {
     icon: Heart,
@@ -32,6 +37,8 @@ const programs = [
     impact: "Breaking taboos and ensuring girls never miss school due to menstruation",
     image: communityOutreach,
     color: "bg-secondary",
+    raised: 85000,
+    goal: 300000,
   },
   {
     icon: Shield,
@@ -40,6 +47,8 @@ const programs = [
     impact: "Protecting children's futures through education and community engagement",
     image: null,
     color: "bg-accent",
+    raised: 45000,
+    goal: 250000,
   },
   {
     icon: Sparkles,
@@ -48,6 +57,8 @@ const programs = [
     impact: "Celebrating culture while building tomorrow's leaders",
     image: culturalGames,
     color: "bg-earth-brown",
+    raised: 60000,
+    goal: 200000,
   },
   {
     icon: Users,
@@ -56,6 +67,8 @@ const programs = [
     impact: "Building protective communities around every child",
     image: null,
     color: "bg-hope-green",
+    raised: 35000,
+    goal: 150000,
   },
   {
     icon: Handshake,
@@ -64,6 +77,8 @@ const programs = [
     impact: "Creating lasting change through strategic partnerships",
     image: null,
     color: "bg-sky-blue",
+    raised: 20000,
+    goal: 100000,
   },
   {
     icon: MessageCircle,
@@ -72,6 +87,8 @@ const programs = [
     impact: "Healing hearts and nurturing emotional wellbeing",
     image: null,
     color: "bg-sun-yellow",
+    raised: 40000,
+    goal: 180000,
   },
   {
     icon: HomeIcon,
@@ -80,6 +97,8 @@ const programs = [
     impact: "Creating a sanctuary for the most vulnerable children",
     image: null,
     color: "bg-heart-red",
+    raised: 150000,
+    goal: 2000000,
   },
 ];
 
@@ -115,7 +134,7 @@ const Programs = () => {
       {/* Programs List */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="space-y-16">
+          <div className="space-y-20">
             {programs.map((program, index) => {
               const ref = useRef(null);
               const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -145,11 +164,27 @@ const Programs = () => {
                     <p className="text-muted-foreground font-body text-lg leading-relaxed mb-6">
                       {program.description}
                     </p>
-                    <div className="bg-muted p-4 rounded-lg">
+                    <div className="bg-muted p-4 rounded-lg mb-6">
                       <p className="text-primary font-body font-medium">
                         <span className="font-semibold">Impact: </span>
                         {program.impact}
                       </p>
+                    </div>
+                    
+                    {/* Donation Progress */}
+                    <div className="bg-card p-6 rounded-xl shadow-card">
+                      <h4 className="font-display text-lg font-semibold text-foreground mb-4">
+                        Fundraising Progress
+                      </h4>
+                      <DonationProgress
+                        current={program.raised}
+                        goal={program.goal}
+                      />
+                      <Link to="/donate" className="mt-4 block">
+                        <Button className="w-full font-semibold">
+                          Support This Program
+                        </Button>
+                      </Link>
                     </div>
                   </div>
 
@@ -159,11 +194,11 @@ const Programs = () => {
                       <img
                         src={program.image}
                         alt={program.title}
-                        className="rounded-2xl shadow-elevated w-full h-80 object-cover"
+                        className="rounded-2xl shadow-elevated w-full h-96 object-cover"
                       />
                     </div>
                   ) : (
-                    <div className={`${program.color} rounded-2xl h-80 flex items-center justify-center ${!isEven ? "lg:order-1" : ""}`}>
+                    <div className={`${program.color} rounded-2xl h-96 flex items-center justify-center ${!isEven ? "lg:order-1" : ""}`}>
                       <program.icon className="w-24 h-24 text-background/30" />
                     </div>
                   )}
@@ -189,12 +224,12 @@ const Programs = () => {
             <p className="text-background/80 font-body text-lg mb-8 max-w-2xl mx-auto">
               Your contribution helps us expand these programs and reach more children in need.
             </p>
-            <a
-              href="/donate"
+            <Link
+              to="/donate"
               className="inline-flex items-center justify-center bg-background text-foreground px-8 py-4 rounded-lg font-semibold hover:bg-background/90 transition-colors"
             >
               Donate Now
-            </a>
+            </Link>
           </motion.div>
         </div>
       </section>
