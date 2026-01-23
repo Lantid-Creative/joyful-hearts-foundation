@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, Heart, Shield, Users, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import DonationProgress from "@/components/shared/DonationProgress";
 
 const programs = [
   {
@@ -13,6 +14,8 @@ const programs = [
       "Distributing learning materials and educational resources to rural children and schools, creating mentorship platforms between rural and urban students.",
     color: "text-primary",
     bgColor: "bg-hope-green-light",
+    raised: 125000,
+    goal: 500000,
   },
   {
     icon: Heart,
@@ -21,6 +24,8 @@ const programs = [
       "Conducting menstrual hygiene education and distributing sanitary products to girls in rural areas, promoting health awareness.",
     color: "text-secondary",
     bgColor: "bg-warmth-orange-light",
+    raised: 85000,
+    goal: 300000,
   },
   {
     icon: Shield,
@@ -29,6 +34,8 @@ const programs = [
       "Organizing awareness campaigns against early marriage and teenage pregnancy, promoting children's rights education through workshops.",
     color: "text-accent",
     bgColor: "bg-sky-blue-light",
+    raised: 45000,
+    goal: 250000,
   },
   {
     icon: Users,
@@ -37,6 +44,8 @@ const programs = [
       "Establishing cultural and moral development programs including storytelling, traditional games, and value-based leadership clubs.",
     color: "text-earth-brown",
     bgColor: "bg-cream-dark",
+    raised: 60000,
+    goal: 200000,
   },
 ];
 
@@ -72,7 +81,7 @@ const ProgramsPreview = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="group bg-card rounded-2xl p-6 shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1"
+              className="group bg-card rounded-2xl p-6 shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1 flex flex-col"
             >
               <div
                 className={`w-12 h-12 ${program.bgColor} rounded-xl flex items-center justify-center mb-5`}
@@ -82,9 +91,18 @@ const ProgramsPreview = () => {
               <h3 className="font-display text-lg font-semibold text-foreground mb-3">
                 {program.title}
               </h3>
-              <p className="text-muted-foreground font-body text-sm leading-relaxed">
+              <p className="text-muted-foreground font-body text-sm leading-relaxed mb-4 flex-1">
                 {program.description}
               </p>
+              
+              {/* Donation Progress */}
+              <div className="pt-4 border-t border-border">
+                <DonationProgress
+                  current={program.raised}
+                  goal={program.goal}
+                  compact
+                />
+              </div>
             </motion.div>
           ))}
         </div>

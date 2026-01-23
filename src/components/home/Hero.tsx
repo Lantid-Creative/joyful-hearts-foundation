@@ -74,7 +74,7 @@ const Hero = () => {
               </Button>
             </Link>
             <Link to="/about">
-              <Button size="lg" variant="outline" className="border-background/30 text-background hover:bg-background/10 font-semibold px-8 py-6 text-lg">
+              <Button size="lg" variant="outline" className="border-background text-background bg-background/10 hover:bg-background/20 font-semibold px-8 py-6 text-lg">
                 Learn More
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
