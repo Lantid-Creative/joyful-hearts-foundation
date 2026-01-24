@@ -7,6 +7,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, Phone, MapPin, Send, Clock, Heart } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
+import { Link } from "react-router-dom";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(2, "Name required").max(100),
+  email: z.string().trim().email("Invalid email").max(255),
+  phone: z.string().trim().max(20).optional(),
+  subject: z.string().trim().min(2, "Subject required").max(200),
+  message: z.string().trim().min(10, "Message must be at least 10 characters").max(1000),
+});
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -17,29 +28,41 @@ const Contact = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+
+    const result = contactSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const { error } = await supabase.from("contact_submissions").insert([formData]);
 
-    toast.success("Message sent successfully! We'll get back to you soon.");
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-    });
+    if (error) {
+      toast.error("Failed to send message. Please try again.");
+    } else {
+      toast.success("Message sent successfully! We'll get back to you soon.");
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+    }
+
     setIsSubmitting(false);
   };
 
@@ -292,9 +315,7 @@ const Contact = () => {
               we'd love to have you on board.
             </p>
             <Button size="lg" className="font-semibold" asChild>
-              <a href="mailto:Info.rhrci@gmail.com?subject=Volunteer Inquiry">
-                Apply to Volunteer
-              </a>
+              <Link to="/volunteer">Apply to Volunteer</Link>
             </Button>
           </motion.div>
         </div>
