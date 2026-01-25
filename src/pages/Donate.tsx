@@ -47,9 +47,9 @@ const impactAreas = [
 ];
 
 const bankDetails = {
-  bankName: "First Bank of Nigeria",
+  bankName: "Sun Trust Bank",
   accountName: "Raising the Hope of Rural Children Initiative",
-  accountNumber: "0123456789", // Placeholder - to be updated
+  accountNumber: "0026104602",
 };
 
 const Donate = () => {
