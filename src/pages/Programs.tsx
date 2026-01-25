@@ -1,6 +1,4 @@
 import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ProgramCard from "@/components/programs/ProgramCard";
@@ -9,26 +7,34 @@ import { useRealtimeDonations } from "@/hooks/usePrograms";
 import communityOutreach from "@/assets/community-outreach.jpg";
 import culturalGames from "@/assets/cultural-games.jpg";
 import distribution from "@/assets/distribution.jpg";
+import girlReading from "@/assets/girl-reading.jpg";
+import heroChildren from "@/assets/hero-children.jpg";
+import villageLandscape from "@/assets/village-landscape.jpg";
 
+// Map program slugs to imported images
 const imageMap: Record<string, string> = {
   "education-support": distribution,
   "menstrual-hygiene": communityOutreach,
   "cultural-development": culturalGames,
+  "childrens-rights": girlReading,
+  "community-engagement": villageLandscape,
+  "partnerships": heroChildren,
+  "counselling": communityOutreach,
+  "safe-haven": villageLandscape,
+  "other-initiatives": heroChildren,
 };
 
 const Programs = () => {
-  const heroRef = useRef(null);
-  const isHeroInView = useInView(heroRef, { once: true });
   const programs = useRealtimeDonations();
 
   return (
     <Layout>
       {/* Hero Section */}
-      <section ref={heroRef} className="relative py-24 bg-gradient-hope">
+      <section className="relative py-24 bg-gradient-hope">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
