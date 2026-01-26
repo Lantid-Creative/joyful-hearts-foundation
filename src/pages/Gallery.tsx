@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Play, X, Image as ImageIcon, Film } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import heroChildren from "@/assets/hero-children.jpg";
 import girlReading from "@/assets/girl-reading.jpg";
 import communityOutreach from "@/assets/community-outreach.jpg";
@@ -10,7 +11,7 @@ import distribution from "@/assets/distribution.jpg";
 import villageLandscape from "@/assets/village-landscape.jpg";
 
 type MediaItem = {
-  id: number;
+  id: string;
   type: "image" | "video";
   src: string;
   thumbnail: string;
@@ -18,9 +19,10 @@ type MediaItem = {
   category: string;
 };
 
-const galleryItems: MediaItem[] = [
+// Default gallery items (used as fallback)
+const defaultGalleryItems: MediaItem[] = [
   {
-    id: 1,
+    id: "1",
     type: "image",
     src: heroChildren,
     thumbnail: heroChildren,
@@ -28,7 +30,7 @@ const galleryItems: MediaItem[] = [
     category: "Education",
   },
   {
-    id: 2,
+    id: "2",
     type: "image",
     src: girlReading,
     thumbnail: girlReading,
@@ -36,7 +38,7 @@ const galleryItems: MediaItem[] = [
     category: "Education",
   },
   {
-    id: 3,
+    id: "3",
     type: "image",
     src: communityOutreach,
     thumbnail: communityOutreach,
@@ -44,7 +46,7 @@ const galleryItems: MediaItem[] = [
     category: "Health",
   },
   {
-    id: 4,
+    id: "4",
     type: "image",
     src: culturalGames,
     thumbnail: culturalGames,
@@ -52,7 +54,7 @@ const galleryItems: MediaItem[] = [
     category: "Culture",
   },
   {
-    id: 5,
+    id: "5",
     type: "image",
     src: distribution,
     thumbnail: distribution,
@@ -60,7 +62,7 @@ const galleryItems: MediaItem[] = [
     category: "Education",
   },
   {
-    id: 6,
+    id: "6",
     type: "image",
     src: villageLandscape,
     thumbnail: villageLandscape,
@@ -69,11 +71,38 @@ const galleryItems: MediaItem[] = [
   },
 ];
 
-const categories = ["All", "Education", "Health", "Culture", "Community"];
+const categories = ["All", "Education", "Health", "Culture", "Community", "Events", "General"];
 
 const Gallery = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
+  const [galleryItems, setGalleryItems] = useState<MediaItem[]>(defaultGalleryItems);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGalleryMedia = async () => {
+      const { data, error } = await supabase
+        .from("gallery_media")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        const dbItems: MediaItem[] = data.map((item) => ({
+          id: item.id,
+          type: item.type as "image" | "video",
+          src: item.url,
+          thumbnail: item.thumbnail_url || item.url,
+          title: item.title,
+          category: item.category,
+        }));
+        setGalleryItems([...dbItems, ...defaultGalleryItems]);
+      }
+      setLoading(false);
+    };
+
+    fetchGalleryMedia();
+  }, []);
 
   const filteredItems =
     selectedCategory === "All"
@@ -129,53 +158,69 @@ const Gallery = () => {
       {/* Gallery Grid */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredItems.map((item) => (
-                <motion.div
-                  key={item.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                  className="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-card"
-                  onClick={() => setSelectedItem(item)}
-                >
-                  <img
-                    src={item.thumbnail}
-                    alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  {/* Content Overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="text-secondary font-body text-sm font-medium mb-1">
-                      {item.category}
-                    </span>
-                    <h3 className="text-background font-display text-xl font-semibold">
-                      {item.title}
-                    </h3>
-                  </div>
-
-                  {/* Type Icon */}
-                  <div className="absolute top-4 right-4 w-10 h-10 bg-background/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <motion.div
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredItems.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    className="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-card"
+                    onClick={() => setSelectedItem(item)}
+                  >
                     {item.type === "video" ? (
-                      <Play className="w-5 h-5 text-background" />
+                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      </div>
                     ) : (
-                      <ImageIcon className="w-5 h-5 text-background" />
+                      <img
+                        src={item.thumbnail}
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
                     )}
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    {/* Content Overlay */}
+                    <div className="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="text-secondary font-body text-sm font-medium mb-1">
+                        {item.category}
+                      </span>
+                      <h3 className="text-background font-display text-xl font-semibold">
+                        {item.title}
+                      </h3>
+                    </div>
 
-          {filteredItems.length === 0 && (
+                    {/* Type Icon */}
+                    <div className="absolute top-4 right-4 w-10 h-10 bg-background/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                      {item.type === "video" ? (
+                        <Play className="w-5 h-5 text-background" />
+                      ) : (
+                        <ImageIcon className="w-5 h-5 text-background" />
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+
+          {!loading && filteredItems.length === 0 && (
             <div className="text-center py-20">
               <p className="text-muted-foreground font-body">
                 No items found in this category.
