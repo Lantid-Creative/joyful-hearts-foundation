@@ -29,8 +29,14 @@ import {
   CheckCircle,
   Search,
   RefreshCw,
+  FileText,
+  Image,
+  Shield,
 } from "lucide-react";
 import logo from "@/assets/rhrci-logo.jpeg";
+import BlogManager from "@/components/admin/BlogManager";
+import GalleryManager from "@/components/admin/GalleryManager";
+import UserRoleManager from "@/components/admin/UserRoleManager";
 
 interface Donation {
   id: string;
@@ -84,6 +90,32 @@ interface ProgramInquiry {
   programs?: { title: string } | null;
 }
 
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  featured_image: string | null;
+  author_name: string | null;
+  is_published: boolean;
+  published_at: string | null;
+  created_at: string;
+}
+
+interface GalleryMedia {
+  id: string;
+  type: string;
+  url: string;
+  thumbnail_url: string | null;
+  title: string;
+  description: string | null;
+  category: string;
+  is_active: boolean;
+  display_order: number;
+  created_at: string;
+}
+
 const Admin = () => {
   const { user, isAdmin, isLoading, signOut } = useAuth();
   const navigate = useNavigate();
@@ -99,6 +131,8 @@ const Admin = () => {
   const [volunteers, setVolunteers] = useState<VolunteerApplication[]>([]);
   const [partners, setPartners] = useState<PartnerRequest[]>([]);
   const [inquiries, setInquiries] = useState<ProgramInquiry[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [galleryMedia, setGalleryMedia] = useState<GalleryMedia[]>([]);
   const [stats, setStats] = useState({
     totalDonations: 0,
     totalContacts: 0,
@@ -106,6 +140,8 @@ const Admin = () => {
     totalPartners: 0,
     unreadContacts: 0,
     pendingVolunteers: 0,
+    totalBlogPosts: 0,
+    totalMedia: 0,
   });
 
   useEffect(() => {
@@ -118,12 +154,14 @@ const Admin = () => {
     setRefreshing(true);
 
     // Fetch all data in parallel
-    const [donationsRes, contactsRes, volunteersRes, partnersRes, inquiriesRes] = await Promise.all([
+    const [donationsRes, contactsRes, volunteersRes, partnersRes, inquiriesRes, blogRes, galleryRes] = await Promise.all([
       supabase.from("donations").select("*, programs(title)").order("created_at", { ascending: false }),
       supabase.from("contact_submissions").select("*").order("created_at", { ascending: false }),
       supabase.from("volunteer_applications").select("*").order("created_at", { ascending: false }),
       supabase.from("partner_requests").select("*").order("created_at", { ascending: false }),
       supabase.from("program_inquiries").select("*, programs(title)").order("created_at", { ascending: false }),
+      supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
+      supabase.from("gallery_media").select("*").order("display_order", { ascending: true }),
     ]);
 
     if (donationsRes.data) setDonations(donationsRes.data);
@@ -131,6 +169,8 @@ const Admin = () => {
     if (volunteersRes.data) setVolunteers(volunteersRes.data);
     if (partnersRes.data) setPartners(partnersRes.data);
     if (inquiriesRes.data) setInquiries(inquiriesRes.data);
+    if (blogRes.data) setBlogPosts(blogRes.data);
+    if (galleryRes.data) setGalleryMedia(galleryRes.data);
 
     // Calculate stats
     setStats({
@@ -140,6 +180,8 @@ const Admin = () => {
       totalPartners: partnersRes.data?.length || 0,
       unreadContacts: contactsRes.data?.filter((c) => !c.is_read).length || 0,
       pendingVolunteers: volunteersRes.data?.filter((v) => v.status === "pending").length || 0,
+      totalBlogPosts: blogRes.data?.length || 0,
+      totalMedia: galleryRes.data?.length || 0,
     });
 
     setRefreshing(false);
@@ -220,6 +262,9 @@ const Admin = () => {
 
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "blog", label: "Blog Posts", icon: FileText },
+    { id: "gallery", label: "Gallery Media", icon: Image },
+    { id: "users", label: "User Roles", icon: Shield },
     { id: "donations", label: "Donations", icon: Gift },
     { id: "contacts", label: "Contact Messages", icon: MessageSquare },
     { id: "volunteers", label: "Volunteer Applications", icon: Users },
@@ -455,6 +500,36 @@ const Admin = () => {
                   </div>
                 </div>
               </div>
+            </motion.div>
+          )}
+
+          {/* Blog Management Tab */}
+          {activeTab === "blog" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <BlogManager posts={blogPosts} onRefresh={fetchData} />
+            </motion.div>
+          )}
+
+          {/* Gallery Management Tab */}
+          {activeTab === "gallery" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <GalleryManager media={galleryMedia} onRefresh={fetchData} />
+            </motion.div>
+          )}
+
+          {/* User Roles Management Tab */}
+          {activeTab === "users" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <UserRoleManager onRefresh={fetchData} />
             </motion.div>
           )}
 
