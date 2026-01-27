@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ProgramCard from "@/components/programs/ProgramCard";
+import HeroSlider from "@/components/programs/HeroSlider";
 import { useRealtimeDonations } from "@/hooks/usePrograms";
 
 import communityOutreach from "@/assets/community-outreach.jpg";
@@ -21,7 +22,8 @@ const imageMap: Record<string, string> = {
   "partnerships": heroChildren,
   "counselling": communityOutreach,
   "safe-haven": villageLandscape,
-  "other-initiatives": heroChildren,
+  "medical-outreach": heroChildren,
+  "other-initiatives": girlReading,
 };
 
 const Programs = () => {
@@ -29,28 +31,8 @@ const Programs = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-hope">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="text-secondary font-semibold font-body text-sm uppercase tracking-wider mb-2 block">
-              What We Do
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Our Programs
-            </h1>
-            <p className="text-muted-foreground font-body text-lg">
-              Through comprehensive programs addressing education, health, rights, and culture, 
-              we're creating lasting change in rural communities across Nigeria.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      {/* Hero Slider */}
+      <HeroSlider />
 
       {/* Programs List */}
       <section className="py-20 bg-background">
