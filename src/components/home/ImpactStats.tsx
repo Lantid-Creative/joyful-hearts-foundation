@@ -4,10 +4,10 @@ import { useRef } from "react";
 import villageLandscape from "@/assets/village-landscape.jpg";
 
 const stats = [
-  { value: "500+", label: "Children Reached" },
+  { value: "1203+", label: "Children Reached" },
   { value: "10+", label: "Communities Served" },
   { value: "50+", label: "Volunteers" },
-  { value: "5+", label: "Active Programs" },
+  { value: "9+", label: "Active Programs" },
 ];
 
 const ImpactStats = () => {
