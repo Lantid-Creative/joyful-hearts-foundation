@@ -105,9 +105,14 @@ const Footer = () => {
           <p className="text-background/60 text-sm font-body">
             © {new Date().getFullYear()} Raising the Hope of Rural Children Initiative. All rights reserved.
           </p>
-          <p className="text-background/60 text-sm font-body flex items-center gap-1">
-            Made with <Heart className="w-4 h-4 text-heart-red fill-heart-red" /> for rural children
-          </p>
+          <div className="flex items-center gap-4">
+            <Link to="/auth" className="text-background/40 hover:text-background/60 text-xs font-body transition-colors">
+              Admin
+            </Link>
+            <p className="text-background/60 text-sm font-body flex items-center gap-1">
+              Made with <Heart className="w-4 h-4 text-heart-red fill-heart-red" /> for rural children
+            </p>
+          </div>
         </div>
       </div>
     </footer>
