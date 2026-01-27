@@ -14,7 +14,7 @@ const programs = [
       "Distributing learning materials and educational resources to rural children and schools, creating mentorship platforms between rural and urban students.",
     color: "text-primary",
     bgColor: "bg-hope-green-light",
-    raised: 125000,
+    raised: 0,
     goal: 500000,
   },
   {
@@ -24,7 +24,7 @@ const programs = [
       "Conducting menstrual hygiene education and distributing sanitary products to girls in rural areas, promoting health awareness.",
     color: "text-secondary",
     bgColor: "bg-warmth-orange-light",
-    raised: 85000,
+    raised: 0,
     goal: 300000,
   },
   {
@@ -34,7 +34,7 @@ const programs = [
       "Organizing awareness campaigns against early marriage and teenage pregnancy, promoting children's rights education through workshops.",
     color: "text-accent",
     bgColor: "bg-sky-blue-light",
-    raised: 45000,
+    raised: 0,
     goal: 250000,
   },
   {
@@ -44,7 +44,7 @@ const programs = [
       "Establishing cultural and moral development programs including storytelling, traditional games, and value-based leadership clubs.",
     color: "text-earth-brown",
     bgColor: "bg-cream-dark",
-    raised: 60000,
+    raised: 0,
     goal: 200000,
   },
 ];
