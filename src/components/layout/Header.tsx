@@ -25,12 +25,9 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
             <img src={logo} alt="RHRCI Logo" className="h-14 w-14 rounded-full object-cover" />
-            <div className="hidden sm:block">
-              <h1 className="font-display text-lg font-semibold text-foreground leading-tight">
-                RHRCI
-              </h1>
-              <p className="text-xs text-muted-foreground">Raising Hope</p>
-            </div>
+            <h1 className="hidden sm:block font-display text-lg font-semibold text-foreground leading-tight">
+              RHRCI
+            </h1>
           </Link>
 
           {/* Desktop Navigation */}
