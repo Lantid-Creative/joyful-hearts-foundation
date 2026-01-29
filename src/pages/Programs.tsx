@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ProgramCard from "@/components/programs/ProgramCard";
-import HeroSlider from "@/components/programs/HeroSlider";
 import { useRealtimeDonations } from "@/hooks/usePrograms";
 
 import communityOutreach from "@/assets/community-outreach.jpg";
@@ -31,8 +30,24 @@ const Programs = () => {
 
   return (
     <Layout>
-      {/* Hero Slider */}
-      <HeroSlider />
+      {/* Page Header */}
+      <section className="py-16 bg-gradient-hero">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <h1 className="font-display text-4xl md:text-5xl font-bold text-background mb-4">
+              Our Programs
+            </h1>
+            <p className="text-background/80 font-body text-lg max-w-2xl mx-auto">
+              Discover how we're making a difference in the lives of rural children through our comprehensive programs.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Programs List */}
       <section className="py-20 bg-background">
