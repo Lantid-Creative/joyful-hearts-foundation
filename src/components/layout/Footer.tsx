@@ -56,11 +56,31 @@ const Footer = () => {
           <div>
             <h4 className="font-display text-lg font-semibold mb-4">Our Programs</h4>
             <ul className="space-y-3 font-body text-sm">
-              <li className="text-background/70">Education Support</li>
-              <li className="text-background/70">Menstrual Hygiene Awareness</li>
-              <li className="text-background/70">Rights Advocacy</li>
-              <li className="text-background/70">Cultural Preservation</li>
-              <li className="text-background/70">Child Protection</li>
+              <li>
+                <Link to="/programs/education-support" className="text-background/70 hover:text-background transition-colors">
+                  Education Support
+                </Link>
+              </li>
+              <li>
+                <Link to="/programs/menstrual-hygiene" className="text-background/70 hover:text-background transition-colors">
+                  Menstrual Hygiene Awareness
+                </Link>
+              </li>
+              <li>
+                <Link to="/programs/childrens-rights" className="text-background/70 hover:text-background transition-colors">
+                  Rights Advocacy
+                </Link>
+              </li>
+              <li>
+                <Link to="/programs/cultural-development" className="text-background/70 hover:text-background transition-colors">
+                  Cultural Preservation
+                </Link>
+              </li>
+              <li>
+                <Link to="/programs/safe-haven" className="text-background/70 hover:text-background transition-colors">
+                  Child Protection
+                </Link>
+              </li>
             </ul>
           </div>
 
