@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -98,8 +98,7 @@ const Donate = () => {
     }
   };
 
-  // Check for returning from Paystack
-  useState(() => {
+  useEffect(() => {
     const ref = localStorage.getItem("paystack_ref");
     const urlParams = new URLSearchParams(window.location.search);
     const trxref = urlParams.get("trxref") || urlParams.get("reference");
@@ -121,7 +120,7 @@ const Donate = () => {
       // Clean URL
       window.history.replaceState({}, "", window.location.pathname);
     }
-  });
+  }, []);
 
   return (
     <Layout>
