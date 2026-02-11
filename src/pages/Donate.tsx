@@ -65,8 +65,9 @@ const Donate = () => {
       toast.error("Please select or enter a valid donation amount (minimum ₦100)");
       return;
     }
-    if (!donorEmail) {
-      toast.error("Please enter your email address");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!donorEmail || !emailRegex.test(donorEmail)) {
+      toast.error("Please enter a valid email address");
       return;
     }
 
