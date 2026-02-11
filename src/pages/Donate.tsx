@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Heart, 
   Gift, 
@@ -13,38 +14,16 @@ import {
   Shield, 
   Copy, 
   Check,
-  CreditCard
+  CreditCard,
+  Wallet,
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import ImpactAreas from "@/components/donate/ImpactAreas";
+import OtherWaysToGive from "@/components/donate/OtherWaysToGive";
 
 const donationAmounts = [5000, 10000, 25000, 50000, 100000];
-
-const impactAreas = [
-  {
-    icon: BookOpen,
-    title: "Education",
-    description: "Provide books, supplies, and learning materials",
-    amount: "₦5,000 educates a child for a term",
-  },
-  {
-    icon: Heart,
-    title: "Health & Hygiene",
-    description: "Distribute sanitary products and health education",
-    amount: "₦3,000 provides 6 months of sanitary supplies",
-  },
-  {
-    icon: Shield,
-    title: "Child Protection",
-    description: "Fund counselling services and safe spaces",
-    amount: "₦10,000 supports a vulnerable child",
-  },
-  {
-    icon: Users,
-    title: "Community Programs",
-    description: "Run workshops and cultural activities",
-    amount: "₦25,000 sponsors a community event",
-  },
-];
 
 const bankDetails = {
   bankName: "Sun Trust Bank",
@@ -57,6 +36,10 @@ const Donate = () => {
   const [customAmount, setCustomAmount] = useState("");
   const [frequency, setFrequency] = useState("one-time");
   const [copied, setCopied] = useState(false);
+  const [donorName, setDonorName] = useState("");
+  const [donorEmail, setDonorEmail] = useState("");
+  const [donorPhone, setDonorPhone] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleCopyAccount = () => {
     navigator.clipboard.writeText(bankDetails.accountNumber);
@@ -76,6 +59,69 @@ const Donate = () => {
   };
 
   const finalAmount = customAmount ? parseInt(customAmount) : selectedAmount;
+
+  const handlePaystackPayment = async () => {
+    if (!finalAmount || finalAmount < 100) {
+      toast.error("Please select or enter a valid donation amount (minimum ₦100)");
+      return;
+    }
+    if (!donorEmail) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("initialize-payment", {
+        body: {
+          amount: finalAmount,
+          email: donorEmail,
+          name: donorName,
+          phone: donorPhone,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.authorization_url) {
+        // Store reference for verification on return
+        localStorage.setItem("paystack_ref", data.reference);
+        window.location.href = data.authorization_url;
+      } else {
+        toast.error("Could not initialize payment. Please try again.");
+      }
+    } catch (err) {
+      console.error("Payment error:", err);
+      toast.error("Payment initialization failed. Please try bank transfer instead.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Check for returning from Paystack
+  useState(() => {
+    const ref = localStorage.getItem("paystack_ref");
+    const urlParams = new URLSearchParams(window.location.search);
+    const trxref = urlParams.get("trxref") || urlParams.get("reference");
+
+    if (ref || trxref) {
+      const reference = trxref || ref;
+      localStorage.removeItem("paystack_ref");
+
+      supabase.functions
+        .invoke("verify-payment", { body: { reference } })
+        .then(({ data }) => {
+          if (data?.status === "success") {
+            toast.success("Thank you! Your donation has been received successfully! 🎉");
+          } else {
+            toast.error("Payment could not be verified. Please contact us if you were charged.");
+          }
+        });
+
+      // Clean URL
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  });
 
   return (
     <Layout>
@@ -103,50 +149,7 @@ const Donate = () => {
       </section>
 
       {/* Impact Areas */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="font-display text-3xl font-bold text-foreground mb-4">
-              Your Impact
-            </h2>
-            <p className="text-muted-foreground font-body max-w-2xl mx-auto">
-              See how your donation directly transforms the lives of rural children.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            {impactAreas.map((area, index) => (
-              <motion.div
-                key={area.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-card rounded-2xl p-6 shadow-card text-center"
-              >
-                <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <area.icon className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  {area.title}
-                </h3>
-                <p className="text-muted-foreground font-body text-sm mb-4">
-                  {area.description}
-                </p>
-                <p className="text-secondary font-body font-medium text-sm">
-                  {area.amount}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ImpactAreas />
 
       {/* Donation Form */}
       <section className="py-20 bg-muted">
@@ -239,115 +242,131 @@ const Donate = () => {
                 </motion.div>
               )}
 
-              {/* Bank Transfer Details */}
-              <div className="border-t border-border pt-8">
-                <h3 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" />
-                  Bank Transfer Details
-                </h3>
-                <p className="text-muted-foreground font-body text-sm mb-6">
-                  Make your donation via bank transfer to the account below:
-                </p>
-                <div className="bg-muted rounded-xl p-6 space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground font-body">Bank Name:</span>
-                    <span className="font-semibold text-foreground">{bankDetails.bankName}</span>
-                  </div>
-                  <div className="flex justify-between items-start">
-                    <span className="text-muted-foreground font-body">Account Name:</span>
-                    <span className="font-semibold text-foreground text-right max-w-xs">
-                      {bankDetails.accountName}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground font-body">Account Number:</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-lg text-primary">
-                        {bankDetails.accountNumber}
-                      </span>
-                      <button
-                        onClick={handleCopyAccount}
-                        className="p-2 hover:bg-background rounded-lg transition-colors"
-                        title="Copy account number"
-                      >
-                        {copied ? (
-                          <Check className="w-5 h-5 text-hope-green" />
-                        ) : (
-                          <Copy className="w-5 h-5 text-muted-foreground" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+              {/* Payment Methods */}
+              <Tabs defaultValue="online" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="online" className="flex items-center gap-2">
+                    <Wallet className="w-4 h-4" />
+                    Pay Online
+                  </TabsTrigger>
+                  <TabsTrigger value="bank" className="flex items-center gap-2">
+                    <CreditCard className="w-4 h-4" />
+                    Bank Transfer
+                  </TabsTrigger>
+                </TabsList>
 
-                <p className="text-muted-foreground font-body text-sm mt-6 text-center">
-                  After making your transfer, please send a confirmation to{" "}
-                  <a href="mailto:Info.rhrci@gmail.com" className="text-primary hover:underline">
-                    Info.rhrci@gmail.com
-                  </a>{" "}
-                  with your name and donation amount.
-                </p>
-              </div>
+                {/* Online Payment Tab */}
+                <TabsContent value="online">
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="donor-name">Full Name</Label>
+                        <Input
+                          id="donor-name"
+                          placeholder="Your full name"
+                          value={donorName}
+                          onChange={(e) => setDonorName(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="donor-email">Email Address *</Label>
+                        <Input
+                          id="donor-email"
+                          type="email"
+                          placeholder="your@email.com"
+                          value={donorEmail}
+                          onChange={(e) => setDonorEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="donor-phone">Phone Number (optional)</Label>
+                      <Input
+                        id="donor-phone"
+                        type="tel"
+                        placeholder="+234..."
+                        value={donorPhone}
+                        onChange={(e) => setDonorPhone(e.target.value)}
+                      />
+                    </div>
+                    <Button
+                      onClick={handlePaystackPayment}
+                      disabled={isProcessing || !finalAmount}
+                      size="lg"
+                      className="w-full font-semibold text-lg py-6"
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          Donate {finalAmount ? `₦${finalAmount.toLocaleString()}` : ""} Now
+                        </>
+                      )}
+                    </Button>
+                    <p className="text-muted-foreground font-body text-xs text-center">
+                      Secured by Paystack. You'll be redirected to complete payment.
+                    </p>
+                  </div>
+                </TabsContent>
+
+                {/* Bank Transfer Tab */}
+                <TabsContent value="bank">
+                  <div>
+                    <p className="text-muted-foreground font-body text-sm mb-6">
+                      Make your donation via bank transfer to the account below:
+                    </p>
+                    <div className="bg-muted rounded-xl p-6 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground font-body">Bank Name:</span>
+                        <span className="font-semibold text-foreground">{bankDetails.bankName}</span>
+                      </div>
+                      <div className="flex justify-between items-start">
+                        <span className="text-muted-foreground font-body">Account Name:</span>
+                        <span className="font-semibold text-foreground text-right max-w-xs">
+                          {bankDetails.accountName}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground font-body">Account Number:</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-lg text-primary">
+                            {bankDetails.accountNumber}
+                          </span>
+                          <button
+                            onClick={handleCopyAccount}
+                            className="p-2 hover:bg-background rounded-lg transition-colors"
+                            title="Copy account number"
+                          >
+                            {copied ? (
+                              <Check className="w-5 h-5 text-hope-green" />
+                            ) : (
+                              <Copy className="w-5 h-5 text-muted-foreground" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-muted-foreground font-body text-sm mt-6 text-center">
+                      After making your transfer, please send a confirmation to{" "}
+                      <a href="mailto:Info.rhrci@gmail.com" className="text-primary hover:underline">
+                        Info.rhrci@gmail.com
+                      </a>{" "}
+                      with your name and donation amount.
+                    </p>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* Other Ways to Give */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <h2 className="font-display text-3xl font-bold text-foreground mb-4">
-              Other Ways to Give
-            </h2>
-            <p className="text-muted-foreground font-body text-lg mb-8">
-              Beyond monetary donations, there are many ways you can support our mission.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-card p-6 rounded-xl shadow-card">
-                <Heart className="w-10 h-10 text-secondary mx-auto mb-4" />
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  Donate Supplies
-                </h3>
-                <p className="text-muted-foreground font-body text-sm">
-                  Books, school supplies, sanitary products, and other materials are always welcome.
-                </p>
-              </div>
-              <div className="bg-card p-6 rounded-xl shadow-card">
-                <Users className="w-10 h-10 text-primary mx-auto mb-4" />
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  Volunteer Time
-                </h3>
-                <p className="text-muted-foreground font-body text-sm">
-                  Share your skills and time with rural communities as a volunteer.
-                </p>
-              </div>
-              <div className="bg-card p-6 rounded-xl shadow-card">
-                <Gift className="w-10 h-10 text-accent mx-auto mb-4" />
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  Corporate Sponsorship
-                </h3>
-                <p className="text-muted-foreground font-body text-sm">
-                  Partner with us as a corporate sponsor to make a larger impact.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-10">
-              <Button size="lg" variant="outline" className="font-semibold" asChild>
-                <a href="/contact">Contact Us to Discuss</a>
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <OtherWaysToGive />
     </Layout>
   );
 };
