@@ -96,6 +96,10 @@ const Partner = () => {
     } else {
       setIsSuccess(true);
       toast.success("Partnership request submitted successfully!");
+      // Fire-and-forget admin notification
+      supabase.functions.invoke("send-notification-email", {
+        body: { type: "partner", data: formData },
+      }).catch(console.error);
     }
 
     setIsSubmitting(false);
