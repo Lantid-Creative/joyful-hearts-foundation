@@ -472,6 +472,9 @@ export type Database = {
         Returns: boolean
       }
       is_content_manager: { Args: { _user_id: string }; Returns: boolean }
+      is_rate_limited_contact: { Args: { p_email: string }; Returns: boolean }
+      is_rate_limited_partner: { Args: { p_email: string }; Returns: boolean }
+      is_rate_limited_volunteer: { Args: { p_email: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user" | "content_manager"

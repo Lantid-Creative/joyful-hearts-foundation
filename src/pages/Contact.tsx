@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 import { Link } from "react-router-dom";
+import { checkRateLimit, formatRetryTime } from "@/hooks/useRateLimit";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name required").max(100),
@@ -49,6 +50,12 @@ const Contact = () => {
         if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
+      return;
+    }
+
+    const rateCheck = checkRateLimit("contact");
+    if (!rateCheck.allowed) {
+      toast.error(`Too many messages sent. Please try again in ${formatRetryTime(rateCheck.retryAfterMs)}.`);
       return;
     }
 
