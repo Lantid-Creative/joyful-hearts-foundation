@@ -10,6 +10,7 @@ import { Heart, Users, Calendar, MapPin, Sparkles, CheckCircle } from "lucide-re
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { checkRateLimit, formatRetryTime } from "@/hooks/useRateLimit";
 
 const volunteerSchema = z.object({
   full_name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -68,6 +69,12 @@ const Volunteer = () => {
         if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
+      return;
+    }
+
+    const rateCheck = checkRateLimit("volunteer");
+    if (!rateCheck.allowed) {
+      toast.error(`Too many applications submitted. Please try again in ${formatRetryTime(rateCheck.retryAfterMs)}.`);
       return;
     }
 

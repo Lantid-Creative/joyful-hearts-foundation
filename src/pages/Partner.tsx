@@ -10,6 +10,7 @@ import { Handshake, Building2, Users, Target, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { checkRateLimit, formatRetryTime } from "@/hooks/useRateLimit";
 
 const partnerSchema = z.object({
   organization_name: z.string().trim().min(2, "Organization name required").max(200),
@@ -77,6 +78,12 @@ const Partner = () => {
         if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
+      return;
+    }
+
+    const rateCheck = checkRateLimit("partner");
+    if (!rateCheck.allowed) {
+      toast.error(`Too many requests submitted. Please try again in ${formatRetryTime(rateCheck.retryAfterMs)}.`);
       return;
     }
 
