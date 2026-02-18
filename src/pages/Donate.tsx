@@ -113,6 +113,20 @@ const Donate = () => {
         .then(({ data }) => {
           if (data?.status === "success") {
             toast.success("Thank you! Your donation has been received successfully! 🎉");
+            // Notify admins
+            supabase.functions.invoke("send-notification-email", {
+              body: {
+                type: "donation",
+                data: {
+                  amount: data.amount,
+                  donor_name: data.donor_name || donorName,
+                  donor_email: data.donor_email || donorEmail,
+                  donor_phone: data.donor_phone || donorPhone,
+                  payment_status: "success",
+                  payment_reference: reference,
+                },
+              },
+            }).catch(console.error);
           } else {
             toast.error("Payment could not be verified. Please contact us if you were charged.");
           }

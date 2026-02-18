@@ -68,6 +68,10 @@ const Contact = () => {
     } else {
       toast.success("Message sent successfully! We'll get back to you soon.");
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      // Fire-and-forget admin notification
+      supabase.functions.invoke("send-notification-email", {
+        body: { type: "contact", data: formData },
+      }).catch(console.error);
     }
 
     setIsSubmitting(false);

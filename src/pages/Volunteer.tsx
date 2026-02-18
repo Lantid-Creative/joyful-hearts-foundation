@@ -87,6 +87,10 @@ const Volunteer = () => {
     } else {
       setIsSuccess(true);
       toast.success("Application submitted successfully!");
+      // Fire-and-forget admin notification
+      supabase.functions.invoke("send-notification-email", {
+        body: { type: "volunteer", data: formData },
+      }).catch(console.error);
     }
 
     setIsSubmitting(false);
