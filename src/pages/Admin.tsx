@@ -268,8 +268,11 @@ const Admin = () => {
 
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "blog", label: "Blog Posts", icon: FileText },
     { id: "gallery", label: "Gallery Media", icon: Image },
+    { id: "events", label: "Events", icon: Calendar },
+    { id: "newsletter", label: "Newsletter", icon: Mail },
     { id: "users", label: "User Roles", icon: Shield },
     { id: "donations", label: "Donations", icon: Gift },
     { id: "contacts", label: "Contact Messages", icon: MessageSquare },
