@@ -512,7 +512,42 @@ const Admin = () => {
             </motion.div>
           )}
 
-          {/* Blog Management Tab */}
+          {/* Analytics Tab */}
+          {activeTab === "analytics" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <AdminAnalytics
+                donations={donations as any}
+                contacts={contacts}
+                volunteers={volunteers}
+                partners={partners}
+              />
+            </motion.div>
+          )}
+
+          {/* Events Management Tab */}
+          {activeTab === "events" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <EventManager onRefresh={fetchData} />
+            </motion.div>
+          )}
+
+          {/* Newsletter Management Tab */}
+          {activeTab === "newsletter" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <NewsletterManager onRefresh={fetchData} />
+            </motion.div>
+          )}
+
+
           {activeTab === "blog" && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
