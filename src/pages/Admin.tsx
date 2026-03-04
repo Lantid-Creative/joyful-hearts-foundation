@@ -32,11 +32,17 @@ import {
   FileText,
   Image,
   Shield,
+  Calendar,
+  Mail,
+  BarChart3,
 } from "lucide-react";
 import logo from "@/assets/rhrci-logo.jpeg";
 import BlogManager from "@/components/admin/BlogManager";
 import GalleryManager from "@/components/admin/GalleryManager";
 import UserRoleManager from "@/components/admin/UserRoleManager";
+import EventManager from "@/components/admin/EventManager";
+import NewsletterManager from "@/components/admin/NewsletterManager";
+import AdminAnalytics from "@/components/admin/AdminAnalytics";
 
 interface Donation {
   id: string;
