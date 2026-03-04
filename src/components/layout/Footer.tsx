@@ -1,16 +1,22 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Heart } from "lucide-react";
 import logo from "@/assets/rhrci-logo.jpeg";
+import NewsletterSignup from "@/components/shared/NewsletterSignup";
 
 const Footer = () => {
   return (
     <footer className="bg-foreground text-background">
       <div className="container mx-auto px-4 py-16">
+        {/* Newsletter Section */}
+        <div className="mb-12 max-w-xl mx-auto">
+          <NewsletterSignup />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Logo & Mission */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-4">
-              <img src={logo} alt="RHRCI Logo" className="h-16 w-16 rounded-full object-cover" />
+              <img src={logo} alt="RHRCI Logo" className="h-16 w-16 rounded-full object-cover" loading="lazy" />
             </Link>
             <h3 className="font-display text-xl font-semibold mb-2">
               Raising the Hope of Rural Children Initiative
@@ -32,6 +38,11 @@ const Footer = () => {
               <li>
                 <Link to="/programs" className="text-background/70 hover:text-background transition-colors">
                   Our Programs
+                </Link>
+              </li>
+              <li>
+                <Link to="/events" className="text-background/70 hover:text-background transition-colors">
+                  Events
                 </Link>
               </li>
               <li>
