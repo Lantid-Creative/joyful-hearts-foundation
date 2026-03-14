@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import { Play, X, Image as ImageIcon, Film } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import heroChildren from "@/assets/hero-children.jpg";
