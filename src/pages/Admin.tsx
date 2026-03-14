@@ -537,15 +537,6 @@ const Admin = () => {
             </motion.div>
           )}
 
-          {/* Newsletter Management Tab */}
-          {activeTab === "newsletter" && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <NewsletterManager onRefresh={fetchData} />
-            </motion.div>
-          )}
 
 
           {activeTab === "blog" && (
