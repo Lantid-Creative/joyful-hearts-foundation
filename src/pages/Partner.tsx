@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -135,6 +136,7 @@ const Partner = () => {
 
   return (
     <Layout>
+      <SEOHead title="Partner With Us" description="Partner with RHRCI to create lasting impact for rural children. Explore corporate, NGO, and institutional partnership opportunities." path="/partner" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hero text-background">
         <div className="container mx-auto px-4">

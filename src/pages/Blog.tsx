@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, User, ArrowRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -56,6 +57,7 @@ const Blog = () => {
 
   return (
     <Layout>
+      <SEOHead title="Blog" description="Read stories of impact, program updates, and insights from RHRCI's work empowering rural children in Nigeria." path="/blog" type="blog" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hope">
         <div className="container mx-auto px-4">

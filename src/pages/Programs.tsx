@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import ProgramCard from "@/components/programs/ProgramCard";
 import { useRealtimeDonations } from "@/hooks/usePrograms";
 
@@ -30,6 +31,7 @@ const Programs = () => {
 
   return (
     <Layout>
+      <SEOHead title="Our Programs" description="Explore RHRCI's programs including education support, menstrual hygiene awareness, children's rights advocacy, and cultural preservation." path="/programs" />
       {/* Page Header */}
       <section className="py-16 bg-gradient-hero">
         <div className="container mx-auto px-4">

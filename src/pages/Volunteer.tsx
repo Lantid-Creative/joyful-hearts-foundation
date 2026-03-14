@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -126,6 +127,7 @@ const Volunteer = () => {
 
   return (
     <Layout>
+      <SEOHead title="Volunteer" description="Join RHRCI as a volunteer. Help empower rural children through education, mentorship, and community outreach in Anambra State, Nigeria." path="/volunteer" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hero text-background">
         <div className="container mx-auto px-4">

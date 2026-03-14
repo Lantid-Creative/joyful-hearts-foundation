@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import { Play, X, Image as ImageIcon, Film } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import heroChildren from "@/assets/hero-children.jpg";
@@ -111,6 +112,7 @@ const Gallery = () => {
 
   return (
     <Layout>
+      <SEOHead title="Gallery" description="View photos and videos from RHRCI's community outreach, educational programs, and cultural events in rural Nigeria." path="/gallery" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hope">
         <div className="container mx-auto px-4">

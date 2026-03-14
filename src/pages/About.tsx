@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import { Target, Eye, Heart, Users, Award, Globe } from "lucide-react";
 import girlReading from "@/assets/girl-reading.jpg";
 
@@ -49,6 +50,7 @@ const About = () => {
 
   return (
     <Layout>
+      <SEOHead title="About Us" description="Learn about RHRCI's mission to empower rural children through education, rights advocacy, and cultural preservation in Anambra State, Nigeria." path="/about" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hope">
         <div className="container mx-auto px-4">
