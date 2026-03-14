@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, User, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -84,6 +85,13 @@ const BlogPostPage = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title={post.title}
+        description={post.excerpt || post.content.substring(0, 155)}
+        path={`/blog/${post.slug}`}
+        image={post.featured_image || undefined}
+        type="article"
+      />
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-hope">
         <div className="container mx-auto px-4">
