@@ -57,6 +57,7 @@ const Blog = () => {
 
   return (
     <Layout>
+      <SEOHead title="Blog" description="Read stories of impact, program updates, and insights from RHRCI's work empowering rural children in Nigeria." path="/blog" type="blog" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hope">
         <div className="container mx-auto px-4">

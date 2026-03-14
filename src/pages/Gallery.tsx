@@ -112,6 +112,7 @@ const Gallery = () => {
 
   return (
     <Layout>
+      <SEOHead title="Gallery" description="View photos and videos from RHRCI's community outreach, educational programs, and cultural events in rural Nigeria." path="/gallery" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hope">
         <div className="container mx-auto px-4">

@@ -80,6 +80,7 @@ const Contact = () => {
 
   return (
     <Layout>
+      <SEOHead title="Contact Us" description="Get in touch with RHRCI. Reach out for inquiries about our programs, partnerships, or how you can support rural children in Nigeria." path="/contact" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hope">
         <div className="container mx-auto px-4">

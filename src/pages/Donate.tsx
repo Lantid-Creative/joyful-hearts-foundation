@@ -140,6 +140,7 @@ const Donate = () => {
 
   return (
     <Layout>
+      <SEOHead title="Donate" description="Support RHRCI's mission to empower rural children. Your donation funds education, health programs, and cultural preservation in Nigeria." path="/donate" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hero text-background">
         <div className="container mx-auto px-4">

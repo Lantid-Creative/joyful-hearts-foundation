@@ -50,6 +50,7 @@ const About = () => {
 
   return (
     <Layout>
+      <SEOHead title="About Us" description="Learn about RHRCI's mission to empower rural children through education, rights advocacy, and cultural preservation in Anambra State, Nigeria." path="/about" />
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hope">
         <div className="container mx-auto px-4">
