@@ -33,7 +33,7 @@ import {
   Image,
   Shield,
   Calendar,
-  Mail,
+  
   BarChart3,
 } from "lucide-react";
 import logo from "@/assets/rhrci-logo.jpeg";
