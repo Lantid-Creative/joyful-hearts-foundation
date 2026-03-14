@@ -1,17 +1,11 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Heart } from "lucide-react";
 import logo from "@/assets/rhrci-logo.jpeg";
-import NewsletterSignup from "@/components/shared/NewsletterSignup";
 
 const Footer = () => {
   return (
     <footer className="bg-foreground text-background">
       <div className="container mx-auto px-4 py-16">
-        {/* Newsletter Section */}
-        <div className="mb-12 max-w-xl mx-auto">
-          <NewsletterSignup />
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Logo & Mission */}
           <div className="lg:col-span-1">

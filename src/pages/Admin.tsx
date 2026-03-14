@@ -33,7 +33,7 @@ import {
   Image,
   Shield,
   Calendar,
-  Mail,
+  
   BarChart3,
 } from "lucide-react";
 import logo from "@/assets/rhrci-logo.jpeg";
@@ -41,7 +41,7 @@ import BlogManager from "@/components/admin/BlogManager";
 import GalleryManager from "@/components/admin/GalleryManager";
 import UserRoleManager from "@/components/admin/UserRoleManager";
 import EventManager from "@/components/admin/EventManager";
-import NewsletterManager from "@/components/admin/NewsletterManager";
+
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 
 interface Donation {
@@ -272,7 +272,7 @@ const Admin = () => {
     { id: "blog", label: "Blog Posts", icon: FileText },
     { id: "gallery", label: "Gallery Media", icon: Image },
     { id: "events", label: "Events", icon: Calendar },
-    { id: "newsletter", label: "Newsletter", icon: Mail },
+    
     { id: "users", label: "User Roles", icon: Shield },
     { id: "donations", label: "Donations", icon: Gift },
     { id: "contacts", label: "Contact Messages", icon: MessageSquare },
@@ -537,15 +537,6 @@ const Admin = () => {
             </motion.div>
           )}
 
-          {/* Newsletter Management Tab */}
-          {activeTab === "newsletter" && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <NewsletterManager onRefresh={fetchData} />
-            </motion.div>
-          )}
 
 
           {activeTab === "blog" && (
