@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import { Target, Eye, Heart, Users, Award, Globe } from "lucide-react";
 import girlReading from "@/assets/girl-reading.jpg";
 
