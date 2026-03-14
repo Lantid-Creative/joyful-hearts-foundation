@@ -85,6 +85,13 @@ const BlogPostPage = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title={post.title}
+        description={post.excerpt || post.content.substring(0, 155)}
+        path={`/blog/${post.slug}`}
+        image={post.featured_image || undefined}
+        type="article"
+      />
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-hope">
         <div className="container mx-auto px-4">
