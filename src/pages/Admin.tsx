@@ -43,6 +43,7 @@ import UserRoleManager from "@/components/admin/UserRoleManager";
 import EventManager from "@/components/admin/EventManager";
 
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import SiteImagesManager from "@/components/admin/SiteImagesManager";
 
 interface Donation {
   id: string;
@@ -271,6 +272,7 @@ const Admin = () => {
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "blog", label: "Blog Posts", icon: FileText },
     { id: "gallery", label: "Gallery Media", icon: Image },
+    { id: "site-images", label: "Site Images", icon: Image },
     { id: "events", label: "Events", icon: Calendar },
     
     { id: "users", label: "User Roles", icon: Shield },
@@ -555,6 +557,16 @@ const Admin = () => {
               animate={{ opacity: 1, y: 0 }}
             >
               <GalleryManager media={galleryMedia} onRefresh={fetchData} />
+            </motion.div>
+          )}
+
+          {/* Site Images Tab */}
+          {activeTab === "site-images" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <SiteImagesManager />
             </motion.div>
           )}
 
