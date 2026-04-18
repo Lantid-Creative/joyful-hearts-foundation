@@ -7,8 +7,9 @@ import heroImage from "@/assets/hero-children.jpg";
 import communityOutreach from "@/assets/community-outreach.jpg";
 import distribution from "@/assets/distribution.jpg";
 import girlReading from "@/assets/girl-reading.jpg";
+import { useSiteImages } from "@/hooks/useSiteImages";
 
-const slides = [
+const defaultSlides = [
   {
     image: heroImage,
     title: "Raising the Hope of",
@@ -43,17 +44,33 @@ const slides = [
   },
 ];
 
+const HERO_SLOTS = ["home_hero_1", "home_hero_2", "home_hero_3", "home_hero_4"];
+
 const Hero = () => {
+  const { images } = useSiteImages(HERO_SLOTS);
+
+  const slides = defaultSlides.map((d, i) => {
+    const o = images[HERO_SLOTS[i]];
+    return {
+      image: o?.url || d.image,
+      title: o?.title || d.title,
+      highlight: o?.highlight || d.highlight,
+      subtitle: o?.subtitle || d.subtitle,
+      description: o?.description || d.description,
+      tagline: o?.tagline || d.tagline,
+    };
+  });
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
-  }, []);
+  }, [slides.length]);
 
   const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  }, []);
+  }, [slides.length]);
 
   useEffect(() => {
     if (!isAutoPlaying) return;

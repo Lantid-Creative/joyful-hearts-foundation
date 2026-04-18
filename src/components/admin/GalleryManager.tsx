@@ -28,8 +28,10 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Image, Film, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Image, Film, Search, Link2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MediaUploader from "./MediaUploader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface GalleryMedia {
   id: string;
@@ -296,7 +298,7 @@ const GalleryManager = ({ media, onRefresh }: GalleryManagerProps) => {
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingMedia ? "Edit Media" : "Add New Media"}
@@ -308,7 +310,7 @@ const GalleryManager = ({ media, onRefresh }: GalleryManagerProps) => {
               <Select
                 value={formData.type}
                 onValueChange={(value: "image" | "video") =>
-                  setFormData({ ...formData, type: value })
+                  setFormData({ ...formData, type: value, url: "", thumbnail_url: "" })
                 }
               >
                 <SelectTrigger>
@@ -329,31 +331,67 @@ const GalleryManager = ({ media, onRefresh }: GalleryManagerProps) => {
                 placeholder="Enter media title"
               />
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="url">
-                {formData.type === "image" ? "Image URL *" : "Video URL *"}
-              </Label>
-              <Input
-                id="url"
-                value={formData.url}
-                onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                placeholder={
-                  formData.type === "image"
-                    ? "https://example.com/image.jpg"
-                    : "https://youtube.com/watch?v=..."
-                }
-              />
+              <Label>{formData.type === "image" ? "Image *" : "Video *"}</Label>
+              <Tabs defaultValue="upload" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="upload">
+                    <Plus className="w-4 h-4 mr-1" /> Upload
+                  </TabsTrigger>
+                  <TabsTrigger value="url">
+                    <Link2 className="w-4 h-4 mr-1" /> Paste URL
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="upload" className="mt-3">
+                  <MediaUploader
+                    kind={formData.type}
+                    folder={`gallery/${formData.type}s`}
+                    value={formData.url}
+                    mediaType={formData.type}
+                    onChange={(url) => setFormData({ ...formData, url })}
+                    onClear={() => setFormData({ ...formData, url: "" })}
+                    recommendedSize={
+                      formData.type === "image"
+                        ? "1600 × 1200 px (4:3) or 1920 × 1080 (16:9)"
+                        : "1080p MP4 / WebM, max 1 GB"
+                    }
+                    recommendedWeight={
+                      formData.type === "image" ? "Under 800 KB for fast loading" : "Compress with HandBrake if >200 MB"
+                    }
+                  />
+                </TabsContent>
+                <TabsContent value="url" className="mt-3">
+                  <Input
+                    value={formData.url}
+                    onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                    placeholder={
+                      formData.type === "image"
+                        ? "https://example.com/image.jpg"
+                        : "https://youtube.com/watch?v=... or direct .mp4 URL"
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {formData.type === "video"
+                      ? "Use this for YouTube/Vimeo embed links."
+                      : "Paste any publicly accessible image URL."}
+                  </p>
+                </TabsContent>
+              </Tabs>
             </div>
+
             {formData.type === "video" && (
               <div className="space-y-2">
-                <Label htmlFor="thumbnail_url">Thumbnail URL</Label>
-                <Input
-                  id="thumbnail_url"
+                <Label>Video Thumbnail (optional)</Label>
+                <MediaUploader
+                  kind="image"
+                  folder="gallery/thumbnails"
                   value={formData.thumbnail_url}
-                  onChange={(e) =>
-                    setFormData({ ...formData, thumbnail_url: e.target.value })
-                  }
-                  placeholder="https://example.com/thumbnail.jpg"
+                  mediaType="image"
+                  onChange={(url) => setFormData({ ...formData, thumbnail_url: url })}
+                  onClear={() => setFormData({ ...formData, thumbnail_url: "" })}
+                  recommendedSize="1280 × 720 px (16:9)"
+                  recommendedWeight="Under 300 KB"
                 />
               </div>
             )}
