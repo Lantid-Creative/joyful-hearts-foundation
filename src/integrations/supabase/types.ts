@@ -446,6 +446,60 @@ export type Database = {
         }
         Relationships: []
       }
+      site_images: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          description: string | null
+          display_order: number
+          highlight: string | null
+          id: string
+          is_active: boolean
+          media_type: string
+          slot: string
+          subtitle: string | null
+          tagline: string | null
+          title: string | null
+          updated_at: string
+          updated_by: string | null
+          url: string
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          highlight?: string | null
+          id?: string
+          is_active?: boolean
+          media_type?: string
+          slot: string
+          subtitle?: string | null
+          tagline?: string | null
+          title?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          url: string
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          highlight?: string | null
+          id?: string
+          is_active?: boolean
+          media_type?: string
+          slot?: string
+          subtitle?: string | null
+          tagline?: string | null
+          title?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
