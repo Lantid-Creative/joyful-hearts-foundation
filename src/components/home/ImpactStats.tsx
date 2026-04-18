@@ -22,6 +22,8 @@ const ImpactStats = () => {
           src={villageLandscape}
           alt="Rural village landscape"
           className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-foreground/85" />
       </div>

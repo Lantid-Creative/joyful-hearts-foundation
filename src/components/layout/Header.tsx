@@ -25,7 +25,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="RHRCI Logo" className="h-14 w-14 rounded-full object-cover" />
+            <img src={logo} alt="RHRCI Logo" className="h-14 w-14 rounded-full object-cover" width={56} height={56} decoding="async" />
             <h1 className="hidden sm:block font-display text-lg font-semibold text-foreground leading-tight">
               RHRCI
             </h1>
