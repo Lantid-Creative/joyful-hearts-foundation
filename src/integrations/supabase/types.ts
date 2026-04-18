@@ -397,11 +397,13 @@ export type Database = {
       }
       programs: {
         Row: {
+          card_image_url: string | null
           color: string
           created_at: string
           display_order: number
           full_description: string | null
           goal: number
+          hero_image_url: string | null
           icon_name: string
           id: string
           impact: string | null
@@ -413,11 +415,13 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          card_image_url?: string | null
           color: string
           created_at?: string
           display_order?: number
           full_description?: string | null
           goal?: number
+          hero_image_url?: string | null
           icon_name: string
           id?: string
           impact?: string | null
@@ -429,11 +433,13 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          card_image_url?: string | null
           color?: string
           created_at?: string
           display_order?: number
           full_description?: string | null
           goal?: number
+          hero_image_url?: string | null
           icon_name?: string
           id?: string
           impact?: string | null

@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-children.jpg";
-import communityOutreach from "@/assets/community-outreach.jpg";
-import distribution from "@/assets/distribution.jpg";
-import girlReading from "@/assets/girl-reading.jpg";
+import heroImage from "@/assets/hero-children.webp";
+import communityOutreach from "@/assets/community-outreach.webp";
+import distribution from "@/assets/distribution.webp";
+import girlReading from "@/assets/girl-reading.webp";
 import { useSiteImages } from "@/hooks/useSiteImages";
 
 const defaultSlides = [

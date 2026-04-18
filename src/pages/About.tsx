@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
 import { Target, Eye, Heart, Users, Award, Globe } from "lucide-react";
-import girlReading from "@/assets/girl-reading.jpg";
+import girlReading from "@/assets/girl-reading.webp";
 
 const aims = [
   "To promote the education and personal development of rural children.",

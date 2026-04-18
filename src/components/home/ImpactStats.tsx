@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import villageLandscape from "@/assets/village-landscape.jpg";
+import villageLandscape from "@/assets/village-landscape.webp";
 
 const stats = [
   { value: "1203+", label: "Children Reached" },
@@ -22,6 +22,8 @@ const ImpactStats = () => {
           src={villageLandscape}
           alt="Rural village landscape"
           className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-foreground/85" />
       </div>

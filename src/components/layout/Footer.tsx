@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Heart } from "lucide-react";
-import logo from "@/assets/rhrci-logo.jpeg";
+import logo from "@/assets/rhrci-logo.webp";
 
 const Footer = () => {
   return (
@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Logo & Mission */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-4">
-              <img src={logo} alt="RHRCI Logo" className="h-16 w-16 rounded-full object-cover" loading="lazy" />
+              <img src={logo} alt="RHRCI Logo" className="h-16 w-16 rounded-full object-cover" width={64} height={64} loading="lazy" decoding="async" />
             </Link>
             <h3 className="font-display text-xl font-semibold mb-2">
               Raising the Hope of Rural Children Initiative

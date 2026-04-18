@@ -105,6 +105,8 @@ const ProgramCard = ({ program, index, image }: ProgramCardProps) => {
               src={image}
               alt={program.title}
               className="rounded-2xl shadow-elevated w-full h-96 object-cover hover:scale-[1.02] transition-transform cursor-pointer"
+              loading="lazy"
+              decoding="async"
             />
           </Link>
         </div>

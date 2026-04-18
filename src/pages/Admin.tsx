@@ -36,7 +36,7 @@ import {
   
   BarChart3,
 } from "lucide-react";
-import logo from "@/assets/rhrci-logo.jpeg";
+import logo from "@/assets/rhrci-logo.webp";
 import BlogManager from "@/components/admin/BlogManager";
 import GalleryManager from "@/components/admin/GalleryManager";
 import UserRoleManager from "@/components/admin/UserRoleManager";
@@ -44,6 +44,7 @@ import EventManager from "@/components/admin/EventManager";
 
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import SiteImagesManager from "@/components/admin/SiteImagesManager";
+import ProgramImagesManager from "@/components/admin/ProgramImagesManager";
 
 interface Donation {
   id: string;
@@ -273,6 +274,7 @@ const Admin = () => {
     { id: "blog", label: "Blog Posts", icon: FileText },
     { id: "gallery", label: "Gallery Media", icon: Image },
     { id: "site-images", label: "Site Images", icon: Image },
+    { id: "program-images", label: "Program Images", icon: Image },
     { id: "events", label: "Events", icon: Calendar },
     
     { id: "users", label: "User Roles", icon: Shield },
@@ -567,6 +569,16 @@ const Admin = () => {
               animate={{ opacity: 1, y: 0 }}
             >
               <SiteImagesManager />
+            </motion.div>
+          )}
+
+          {/* Program Images Tab */}
+          {activeTab === "program-images" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <ProgramImagesManager />
             </motion.div>
           )}
 

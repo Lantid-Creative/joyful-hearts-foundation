@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import communityOutreach from "@/assets/community-outreach.jpg";
-import distribution from "@/assets/distribution.jpg";
-import girlReading from "@/assets/girl-reading.jpg";
+import communityOutreach from "@/assets/community-outreach.webp";
+import distribution from "@/assets/distribution.webp";
+import girlReading from "@/assets/girl-reading.webp";
 
 const slides = [
   {

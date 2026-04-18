@@ -5,12 +5,12 @@ import SEOHead from "@/components/shared/SEOHead";
 import ProgramCard from "@/components/programs/ProgramCard";
 import { useRealtimeDonations } from "@/hooks/usePrograms";
 
-import communityOutreach from "@/assets/community-outreach.jpg";
-import culturalGames from "@/assets/cultural-games.jpg";
-import distribution from "@/assets/distribution.jpg";
-import girlReading from "@/assets/girl-reading.jpg";
-import heroChildren from "@/assets/hero-children.jpg";
-import villageLandscape from "@/assets/village-landscape.jpg";
+import communityOutreach from "@/assets/community-outreach.webp";
+import culturalGames from "@/assets/cultural-games.webp";
+import distribution from "@/assets/distribution.webp";
+import girlReading from "@/assets/girl-reading.webp";
+import heroChildren from "@/assets/hero-children.webp";
+import villageLandscape from "@/assets/village-landscape.webp";
 
 // Map program slugs to imported images
 const imageMap: Record<string, string> = {
@@ -60,7 +60,7 @@ const Programs = () => {
                 key={program.id}
                 program={program}
                 index={index}
-                image={imageMap[program.slug]}
+                image={program.card_image_url || imageMap[program.slug]}
               />
             ))}
           </div>
