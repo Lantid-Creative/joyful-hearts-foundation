@@ -103,6 +103,9 @@ const Hero = () => {
               src={slides[currentSlide].image}
               alt={slides[currentSlide].title}
               className="w-full h-full object-cover"
+              loading={currentSlide === 0 ? "eager" : "lazy"}
+              decoding="async"
+              {...(currentSlide === 0 ? { fetchPriority: "high" as const } : {})}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/60 to-foreground/40" />
           </div>
