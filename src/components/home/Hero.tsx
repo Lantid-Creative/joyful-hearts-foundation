@@ -74,10 +74,18 @@ const Hero = () => {
 
   useEffect(() => {
     if (!isAutoPlaying) return;
-    
     const timer = setInterval(nextSlide, 5000);
     return () => clearInterval(timer);
   }, [isAutoPlaying, nextSlide]);
+
+  // Warm the next slide's image so the swap is instant
+  useEffect(() => {
+    const next = slides[(currentSlide + 1) % slides.length]?.image;
+    if (!next) return;
+    const img = new window.Image();
+    img.decoding = "async";
+    img.src = next;
+  }, [currentSlide, slides]);
 
   const handleManualNavigation = (action: () => void) => {
     setIsAutoPlaying(false);
