@@ -44,6 +44,7 @@ import EventManager from "@/components/admin/EventManager";
 
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import SiteImagesManager from "@/components/admin/SiteImagesManager";
+import ProgramImagesManager from "@/components/admin/ProgramImagesManager";
 
 interface Donation {
   id: string;
@@ -273,6 +274,7 @@ const Admin = () => {
     { id: "blog", label: "Blog Posts", icon: FileText },
     { id: "gallery", label: "Gallery Media", icon: Image },
     { id: "site-images", label: "Site Images", icon: Image },
+    { id: "program-images", label: "Program Images", icon: Image },
     { id: "events", label: "Events", icon: Calendar },
     
     { id: "users", label: "User Roles", icon: Shield },
