@@ -60,7 +60,7 @@ const Programs = () => {
                 key={program.id}
                 program={program}
                 index={index}
-                image={imageMap[program.slug]}
+                image={program.card_image_url || imageMap[program.slug]}
               />
             ))}
           </div>

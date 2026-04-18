@@ -15,6 +15,8 @@ export interface Program {
   raised: number;
   is_active: boolean;
   display_order: number;
+  card_image_url: string | null;
+  hero_image_url: string | null;
   created_at: string;
   updated_at: string;
 }

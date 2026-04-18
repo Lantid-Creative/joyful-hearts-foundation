@@ -138,7 +138,7 @@ const ProgramDetail = () => {
     );
   }
 
-  const programImage = imageMap[program.slug];
+  const programImage = program.hero_image_url || imageMap[program.slug];
 
   return (
     <Layout>
