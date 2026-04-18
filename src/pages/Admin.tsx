@@ -572,6 +572,16 @@ const Admin = () => {
             </motion.div>
           )}
 
+          {/* Program Images Tab */}
+          {activeTab === "program-images" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <ProgramImagesManager />
+            </motion.div>
+          )}
+
           {/* User Roles Management Tab */}
           {activeTab === "users" && (
             <motion.div
