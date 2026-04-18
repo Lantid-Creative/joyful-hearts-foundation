@@ -4,12 +4,12 @@ import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
 import { Play, X, Image as ImageIcon, Film } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import heroChildren from "@/assets/hero-children.jpg";
-import girlReading from "@/assets/girl-reading.jpg";
-import communityOutreach from "@/assets/community-outreach.jpg";
-import culturalGames from "@/assets/cultural-games.jpg";
-import distribution from "@/assets/distribution.jpg";
-import villageLandscape from "@/assets/village-landscape.jpg";
+import heroChildren from "@/assets/hero-children.webp";
+import girlReading from "@/assets/girl-reading.webp";
+import communityOutreach from "@/assets/community-outreach.webp";
+import culturalGames from "@/assets/cultural-games.webp";
+import distribution from "@/assets/distribution.webp";
+import villageLandscape from "@/assets/village-landscape.webp";
 
 type MediaItem = {
   id: string;

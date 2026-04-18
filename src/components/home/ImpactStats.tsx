@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import villageLandscape from "@/assets/village-landscape.jpg";
+import villageLandscape from "@/assets/village-landscape.webp";
 
 const stats = [
   { value: "1203+", label: "Children Reached" },

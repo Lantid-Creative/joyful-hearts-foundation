@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Heart } from "lucide-react";
-import logo from "@/assets/rhrci-logo.jpeg";
+import logo from "@/assets/rhrci-logo.webp";
 
 const Footer = () => {
   return (

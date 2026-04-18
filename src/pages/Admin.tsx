@@ -36,7 +36,7 @@ import {
   
   BarChart3,
 } from "lucide-react";
-import logo from "@/assets/rhrci-logo.jpeg";
+import logo from "@/assets/rhrci-logo.webp";
 import BlogManager from "@/components/admin/BlogManager";
 import GalleryManager from "@/components/admin/GalleryManager";
 import UserRoleManager from "@/components/admin/UserRoleManager";

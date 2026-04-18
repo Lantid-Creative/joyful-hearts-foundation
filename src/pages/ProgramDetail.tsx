@@ -26,9 +26,9 @@ import {
 } from "lucide-react";
 import { z } from "zod";
 
-import communityOutreach from "@/assets/community-outreach.jpg";
-import culturalGames from "@/assets/cultural-games.jpg";
-import distribution from "@/assets/distribution.jpg";
+import communityOutreach from "@/assets/community-outreach.webp";
+import culturalGames from "@/assets/cultural-games.webp";
+import distribution from "@/assets/distribution.webp";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   BookOpen,

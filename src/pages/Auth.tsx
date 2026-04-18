@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
-import logo from "@/assets/rhrci-logo.jpeg";
+import logo from "@/assets/rhrci-logo.webp";
 import { z } from "zod";
 
 const loginSchema = z.object({
