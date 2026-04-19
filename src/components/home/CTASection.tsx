@@ -9,6 +9,7 @@ import { useSiteImage } from "@/hooks/useSiteImages";
 const CTASection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { image: bgImage } = useSiteImage("section_cta_bg");
 
   const cards = [
     {
@@ -38,8 +39,20 @@ const CTASection = () => {
   ];
 
   return (
-    <section ref={ref} className="py-20 bg-muted">
-      <div className="container mx-auto px-4">
+    <section ref={ref} className={`relative py-20 overflow-hidden ${bgImage?.url ? "" : "bg-muted"}`}>
+      {bgImage?.url && (
+        <div className="absolute inset-0">
+          <img
+            src={bgImage.url}
+            alt={bgImage.alt_text || "Get involved"}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="absolute inset-0 bg-foreground/70" />
+        </div>
+      )}
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
