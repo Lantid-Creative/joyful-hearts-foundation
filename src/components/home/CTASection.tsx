@@ -62,10 +62,10 @@ const CTASection = () => {
           <span className="text-secondary font-semibold font-body text-sm uppercase tracking-wider mb-2 block">
             Get Involved
           </span>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <h2 className={`font-display text-3xl md:text-4xl font-bold mb-4 ${bgImage?.url ? "text-background" : "text-foreground"}`}>
             How You Can Help
           </h2>
-          <p className="text-muted-foreground font-body max-w-2xl mx-auto">
+          <p className={`font-body max-w-2xl mx-auto ${bgImage?.url ? "text-background/90" : "text-muted-foreground"}`}>
             Together, we can create a brighter future for every rural child. 
             Choose how you'd like to make a difference today.
           </p>
