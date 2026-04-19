@@ -11,6 +11,8 @@ export interface SiteImage {
   highlight: string | null;
   description: string | null;
   tagline: string | null;
+  /** 0–80, percent darkness of the overlay placed on top of the image. */
+  overlay_opacity?: number | null;
 }
 
 /** Fetch a single site_images slot. Returns null while loading or if not set. */
