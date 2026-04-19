@@ -308,9 +308,9 @@ const MediaUploader = ({
                 Drag & drop or <span className="text-primary underline">browse</span>
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {kind === "image" && "JPG, PNG, WebP, GIF, AVIF"}
+                {kind === "image" && "JPG, PNG, WebP, GIF, AVIF · auto-optimized to WebP, max 1920px"}
                 {kind === "video" && "MP4, WebM, MOV, MKV"}
-                {kind === "any" && "Image or video"}
+                {kind === "any" && "Image (auto-optimized) or video"}
                 {" · max "}
                 {effectiveMaxMB >= 1024 ? `${(effectiveMaxMB / 1024).toFixed(0)} GB` : `${effectiveMaxMB} MB`}
               </p>
