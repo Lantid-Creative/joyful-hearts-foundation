@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
+import PageHero from "@/components/shared/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -81,28 +82,12 @@ const Contact = () => {
   return (
     <Layout>
       <SEOHead title="Contact Us" description="Get in touch with RHRCI. Reach out for inquiries about our programs, partnerships, or how you can support rural children in Nigeria." path="/contact" />
-      {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-hope">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="text-secondary font-semibold font-body text-sm uppercase tracking-wider mb-2 block">
-              Get In Touch
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Contact Us
-            </h1>
-            <p className="text-muted-foreground font-body text-lg">
-              Have questions about our programs or want to get involved? 
-              We'd love to hear from you!
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        slot="page_contact"
+        eyebrow="Get In Touch"
+        title="Contact Us"
+        description="Have questions about our programs or want to get involved? We'd love to hear from you!"
+      />
 
       {/* Contact Info & Form */}
       <section className="py-20 bg-background">

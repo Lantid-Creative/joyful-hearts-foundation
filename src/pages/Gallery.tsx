@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
+import PageHero from "@/components/shared/PageHero";
 import { Play, X, Image as ImageIcon, Film } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import heroChildren from "@/assets/hero-children.webp";
@@ -113,28 +114,12 @@ const Gallery = () => {
   return (
     <Layout>
       <SEOHead title="Gallery" description="View photos and videos from RHRCI's community outreach, educational programs, and cultural events in rural Nigeria." path="/gallery" />
-      {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-hope">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="text-secondary font-semibold font-body text-sm uppercase tracking-wider mb-2 block">
-              Our Impact
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Gallery
-            </h1>
-            <p className="text-muted-foreground font-body text-lg">
-              Explore moments of joy, learning, and transformation from our programs 
-              and community activities.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        slot="page_gallery"
+        eyebrow="Our Impact"
+        title="Gallery"
+        description="Explore moments of joy, learning, and transformation from our programs and community activities."
+      />
 
       {/* Filter Tabs */}
       <section className="py-8 bg-background border-b border-border">

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Calendar, MapPin, Clock } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
+import PageHero from "@/components/shared/PageHero";
 import { supabase } from "@/integrations/supabase/client";
 import { format, isPast } from "date-fns";
 
@@ -43,23 +44,12 @@ const Events = () => {
         path="/events"
       />
 
-      {/* Hero */}
-      <section className="pt-32 pb-16 bg-gradient-hope">
-        <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Calendar className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Upcoming Events
-            </h1>
-            <p className="text-muted-foreground font-body max-w-2xl mx-auto text-lg">
-              Stay informed about our planned activities, outreach programs, and community engagements.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        slot="page_events"
+        title="Upcoming Events"
+        description="Stay informed about our planned activities, outreach programs, and community engagements."
+        icon={<Calendar className="w-12 h-12 text-primary" />}
+      />
 
       {/* Upcoming Events */}
       <section className="py-16">

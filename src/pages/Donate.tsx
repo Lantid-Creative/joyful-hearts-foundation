@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
+import PageHero from "@/components/shared/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -141,28 +142,17 @@ const Donate = () => {
   return (
     <Layout>
       <SEOHead title="Donate" description="Support RHRCI's mission to empower rural children. Your donation funds education, health programs, and cultural preservation in Nigeria." path="/donate" />
-      {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-hero text-background">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <div className="w-20 h-20 bg-background/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Gift className="w-10 h-10 text-background" />
-            </div>
-            <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-              Make a Donation
-            </h1>
-            <p className="text-background/90 font-body text-lg">
-              Your generosity helps us provide education, health resources, and protection 
-              to rural children across Nigeria. Every contribution makes a difference.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        slot="page_donate"
+        fallbackVariant="hero"
+        title="Make a Donation"
+        description="Your generosity helps us provide education, health resources, and protection to rural children across Nigeria. Every contribution makes a difference."
+        icon={
+          <div className="w-20 h-20 bg-background/20 rounded-full flex items-center justify-center">
+            <Gift className="w-10 h-10 text-background" />
+          </div>
+        }
+      />
 
       {/* Impact Areas */}
       <ImpactAreas />

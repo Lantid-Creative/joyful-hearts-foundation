@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
+import PageHero from "@/components/shared/PageHero";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, User, ArrowRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -58,28 +59,12 @@ const Blog = () => {
   return (
     <Layout>
       <SEOHead title="Blog" description="Read stories of impact, program updates, and insights from RHRCI's work empowering rural children in Nigeria." path="/blog" type="blog" />
-      {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-hope">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="text-secondary font-semibold font-body text-sm uppercase tracking-wider mb-2 block">
-              News & Updates
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Our Blog
-            </h1>
-            <p className="text-muted-foreground font-body text-lg">
-              Stories of impact, program updates, and insights from our work in
-              rural communities.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        slot="page_blog"
+        eyebrow="News & Updates"
+        title="Our Blog"
+        description="Stories of impact, program updates, and insights from our work in rural communities."
+      />
 
       {/* Search Bar */}
       <section className="py-8 bg-background border-b border-border">
