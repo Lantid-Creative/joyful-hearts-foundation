@@ -36,6 +36,66 @@ const formatBytes = (bytes: number) => {
   return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`;
 };
 
+/**
+ * Compress an image client-side: resize to fit within maxDimension and re-encode as WebP.
+ * Skips GIFs (to preserve animation) and AVIF (already efficient). Falls back to original on failure.
+ */
+const compressImage = async (
+  file: File,
+  maxDimension = 1920,
+  quality = 0.82,
+): Promise<File> => {
+  if (file.type === "image/gif" || file.type === "image/avif") return file;
+  try {
+    const bitmap = await createImageBitmap(file).catch(() => null);
+    let width: number;
+    let height: number;
+    let source: CanvasImageSource;
+
+    if (bitmap) {
+      width = bitmap.width;
+      height = bitmap.height;
+      source = bitmap;
+    } else {
+      // Fallback via HTMLImageElement
+      const url = URL.createObjectURL(file);
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const i = new Image();
+        i.onload = () => resolve(i);
+        i.onerror = reject;
+        i.src = url;
+      });
+      URL.revokeObjectURL(url);
+      width = img.naturalWidth;
+      height = img.naturalHeight;
+      source = img;
+    }
+
+    const scale = Math.min(1, maxDimension / Math.max(width, height));
+    const targetW = Math.round(width * scale);
+    const targetH = Math.round(height * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(source, 0, 0, targetW, targetH);
+
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob((b) => resolve(b), "image/webp", quality),
+    );
+    if (!blob) return file;
+    // Only use compressed version if it's actually smaller
+    if (blob.size >= file.size && scale === 1) return file;
+
+    const baseName = file.name.replace(/\.[^.]+$/, "");
+    return new File([blob], `${baseName}.webp`, { type: "image/webp", lastModified: Date.now() });
+  } catch {
+    return file;
+  }
+};
+
 const MediaUploader = ({
   value,
   mediaType = "image",
