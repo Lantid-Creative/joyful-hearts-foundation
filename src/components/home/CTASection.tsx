@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Heart, HandHeart, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSiteImage } from "@/hooks/useSiteImages";
 
 const CTASection = () => {
   const ref = useRef(null);
