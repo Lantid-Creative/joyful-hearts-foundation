@@ -58,6 +58,7 @@ const Hero = () => {
       subtitle: o?.subtitle || d.subtitle,
       description: o?.description || d.description,
       tagline: o?.tagline || d.tagline,
+      overlay: Math.max(0, Math.min(80, o?.overlay_opacity ?? 60)) / 100,
     };
   });
 
