@@ -36,6 +36,66 @@ const formatBytes = (bytes: number) => {
   return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`;
 };
 
+/**
+ * Compress an image client-side: resize to fit within maxDimension and re-encode as WebP.
+ * Skips GIFs (to preserve animation) and AVIF (already efficient). Falls back to original on failure.
+ */
+const compressImage = async (
+  file: File,
+  maxDimension = 1920,
+  quality = 0.82,
+): Promise<File> => {
+  if (file.type === "image/gif" || file.type === "image/avif") return file;
+  try {
+    const bitmap = await createImageBitmap(file).catch(() => null);
+    let width: number;
+    let height: number;
+    let source: CanvasImageSource;
+
+    if (bitmap) {
+      width = bitmap.width;
+      height = bitmap.height;
+      source = bitmap;
+    } else {
+      // Fallback via HTMLImageElement
+      const url = URL.createObjectURL(file);
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const i = new Image();
+        i.onload = () => resolve(i);
+        i.onerror = reject;
+        i.src = url;
+      });
+      URL.revokeObjectURL(url);
+      width = img.naturalWidth;
+      height = img.naturalHeight;
+      source = img;
+    }
+
+    const scale = Math.min(1, maxDimension / Math.max(width, height));
+    const targetW = Math.round(width * scale);
+    const targetH = Math.round(height * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(source, 0, 0, targetW, targetH);
+
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob((b) => resolve(b), "image/webp", quality),
+    );
+    if (!blob) return file;
+    // Only use compressed version if it's actually smaller
+    if (blob.size >= file.size && scale === 1) return file;
+
+    const baseName = file.name.replace(/\.[^.]+$/, "");
+    return new File([blob], `${baseName}.webp`, { type: "image/webp", lastModified: Date.now() });
+  } catch {
+    return file;
+  }
+};
+
 const MediaUploader = ({
   value,
   mediaType = "image",
@@ -96,18 +156,29 @@ const MediaUploader = ({
       setProgress(5);
       setPreviewMeta({ size: file.size, name: file.name });
 
+      // Compress images before upload (videos pass through)
+      let uploadFile = file;
+      let savedBytes = 0;
+      if (isImage) {
+        const compressed = await compressImage(file, 1920, 0.82);
+        if (compressed !== file) {
+          savedBytes = file.size - compressed.size;
+          uploadFile = compressed;
+        }
+      }
+
       // Simulated progress while upload runs (Supabase JS doesn't expose progress events for storage)
       const tick = setInterval(() => {
         setProgress((p) => (p < 90 ? p + Math.max(1, (90 - p) * 0.08) : p));
       }, 200);
 
-      const ext = file.name.split(".").pop() || "bin";
+      const ext = uploadFile.name.split(".").pop() || "bin";
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
-      const { error } = await supabase.storage.from("media").upload(path, file, {
+      const { error } = await supabase.storage.from("media").upload(path, uploadFile, {
         cacheControl: "3600",
         upsert: false,
-        contentType: file.type,
+        contentType: uploadFile.type,
       });
 
       clearInterval(tick);
@@ -127,7 +198,14 @@ const MediaUploader = ({
       }, 400);
 
       onChange(data.publicUrl, isVideo ? "video" : "image");
-      toast({ title: "Uploaded", description: `${file.name} (${formatBytes(file.size)})` });
+      const savingsNote =
+        savedBytes > 0
+          ? ` · optimized, saved ${formatBytes(savedBytes)}`
+          : "";
+      toast({
+        title: "Uploaded",
+        description: `${uploadFile.name} (${formatBytes(uploadFile.size)})${savingsNote}`,
+      });
     },
     [folder, kind, effectiveMaxMB, onChange, toast],
   );
@@ -207,12 +285,18 @@ const MediaUploader = ({
         ) : uploading ? (
           <div className="w-full max-w-sm space-y-2">
             <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-            <p className="text-sm font-medium">Uploading{previewMeta ? ` ${previewMeta.name}` : "..."}</p>
+            <p className="text-sm font-medium">
+              {progress < 15 && previewMeta ? "Optimizing" : "Uploading"}
+              {previewMeta ? ` ${previewMeta.name}` : "..."}
+            </p>
             {previewMeta && (
               <p className="text-xs text-muted-foreground">{formatBytes(previewMeta.size)}</p>
             )}
             <Progress value={progress} className="h-2" />
-            <p className="text-xs text-muted-foreground">{Math.round(progress)}%</p>
+            <p className="text-xs text-muted-foreground">
+              {Math.round(progress)}%
+              {progress < 15 ? " · resizing & converting to WebP" : ""}
+            </p>
           </div>
         ) : (
           <>
@@ -224,9 +308,9 @@ const MediaUploader = ({
                 Drag & drop or <span className="text-primary underline">browse</span>
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {kind === "image" && "JPG, PNG, WebP, GIF, AVIF"}
+                {kind === "image" && "JPG, PNG, WebP, GIF, AVIF · auto-optimized to WebP, max 1920px"}
                 {kind === "video" && "MP4, WebM, MOV, MKV"}
-                {kind === "any" && "Image or video"}
+                {kind === "any" && "Image (auto-optimized) or video"}
                 {" · max "}
                 {effectiveMaxMB >= 1024 ? `${(effectiveMaxMB / 1024).toFixed(0)} GB` : `${effectiveMaxMB} MB`}
               </p>
