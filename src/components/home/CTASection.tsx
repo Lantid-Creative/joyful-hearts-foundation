@@ -49,7 +49,10 @@ const CTASection = () => {
             loading="lazy"
             decoding="async"
           />
-          <div className="absolute inset-0 bg-foreground/70" />
+          <div
+            className="absolute inset-0 bg-foreground"
+            style={{ opacity: Math.max(0, Math.min(80, bgImage.overlay_opacity ?? 70)) / 100 }}
+          />
         </div>
       )}
       <div className="container mx-auto px-4 relative z-10">
