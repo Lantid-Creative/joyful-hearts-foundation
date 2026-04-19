@@ -156,18 +156,29 @@ const MediaUploader = ({
       setProgress(5);
       setPreviewMeta({ size: file.size, name: file.name });
 
+      // Compress images before upload (videos pass through)
+      let uploadFile = file;
+      let savedBytes = 0;
+      if (isImage) {
+        const compressed = await compressImage(file, 1920, 0.82);
+        if (compressed !== file) {
+          savedBytes = file.size - compressed.size;
+          uploadFile = compressed;
+        }
+      }
+
       // Simulated progress while upload runs (Supabase JS doesn't expose progress events for storage)
       const tick = setInterval(() => {
         setProgress((p) => (p < 90 ? p + Math.max(1, (90 - p) * 0.08) : p));
       }, 200);
 
-      const ext = file.name.split(".").pop() || "bin";
+      const ext = uploadFile.name.split(".").pop() || "bin";
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
-      const { error } = await supabase.storage.from("media").upload(path, file, {
+      const { error } = await supabase.storage.from("media").upload(path, uploadFile, {
         cacheControl: "3600",
         upsert: false,
-        contentType: file.type,
+        contentType: uploadFile.type,
       });
 
       clearInterval(tick);
@@ -187,7 +198,14 @@ const MediaUploader = ({
       }, 400);
 
       onChange(data.publicUrl, isVideo ? "video" : "image");
-      toast({ title: "Uploaded", description: `${file.name} (${formatBytes(file.size)})` });
+      const savingsNote =
+        savedBytes > 0
+          ? ` · optimized, saved ${formatBytes(savedBytes)}`
+          : "";
+      toast({
+        title: "Uploaded",
+        description: `${uploadFile.name} (${formatBytes(uploadFile.size)})${savingsNote}`,
+      });
     },
     [folder, kind, effectiveMaxMB, onChange, toast],
   );
