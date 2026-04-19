@@ -114,6 +114,8 @@ const SiteImagesManager = () => {
       highlight: draft.highlight || null,
       description: draft.description || null,
       tagline: draft.tagline || null,
+      overlay_opacity:
+        typeof draft.overlay_opacity === "number" ? draft.overlay_opacity : 60,
     };
     const { error } = await supabase
       .from("site_images")
