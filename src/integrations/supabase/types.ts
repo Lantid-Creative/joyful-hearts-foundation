@@ -462,6 +462,7 @@ export type Database = {
           id: string
           is_active: boolean
           media_type: string
+          overlay_opacity: number
           slot: string
           subtitle: string | null
           tagline: string | null
@@ -479,6 +480,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           media_type?: string
+          overlay_opacity?: number
           slot: string
           subtitle?: string | null
           tagline?: string | null
@@ -496,6 +498,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           media_type?: string
+          overlay_opacity?: number
           slot?: string
           subtitle?: string | null
           tagline?: string | null

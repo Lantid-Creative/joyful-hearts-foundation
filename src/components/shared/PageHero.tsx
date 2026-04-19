@@ -68,7 +68,12 @@ const PageHero = ({
             fetchPriority="high"
             decoding="async"
           />
-          <div className="absolute inset-0 bg-foreground/60" />
+          <div
+            className="absolute inset-0 bg-foreground"
+            style={{
+              opacity: Math.max(0, Math.min(80, image!.overlay_opacity ?? 60)) / 100,
+            }}
+          />
         </div>
       )}
 

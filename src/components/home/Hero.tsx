@@ -58,6 +58,7 @@ const Hero = () => {
       subtitle: o?.subtitle || d.subtitle,
       description: o?.description || d.description,
       tagline: o?.tagline || d.tagline,
+      overlay: Math.max(0, Math.min(80, o?.overlay_opacity ?? 60)) / 100,
     };
   });
 
@@ -115,7 +116,10 @@ const Hero = () => {
               decoding="async"
               {...(currentSlide === 0 ? { fetchPriority: "high" as const } : {})}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/60 to-foreground/40" />
+            <div
+              className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground to-transparent"
+              style={{ opacity: slides[currentSlide].overlay }}
+            />
           </div>
         </motion.div>
       </AnimatePresence>

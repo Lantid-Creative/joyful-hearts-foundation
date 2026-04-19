@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ interface SiteImageRow {
   highlight: string | null;
   description: string | null;
   tagline: string | null;
+  overlay_opacity: number | null;
 }
 
 type SlotKind = "hero-slide" | "page-hero" | "section-bg";
@@ -112,6 +114,8 @@ const SiteImagesManager = () => {
       highlight: draft.highlight || null,
       description: draft.description || null,
       tagline: draft.tagline || null,
+      overlay_opacity:
+        typeof draft.overlay_opacity === "number" ? draft.overlay_opacity : 60,
     };
     const { error } = await supabase
       .from("site_images")
@@ -229,6 +233,64 @@ const SiteImagesManager = () => {
                         placeholder="Describe the image briefly"
                       />
                     </div>
+
+                    {v.url && (
+                      <div className="space-y-3 pt-2 border-t">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label>Dark overlay strength</Label>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              Higher = darker overlay, easier to read text on bright photos.
+                            </p>
+                          </div>
+                          <Badge variant="outline" className="font-mono">
+                            {Math.round(
+                              typeof v.overlay_opacity === "number" ? v.overlay_opacity : 60,
+                            )}
+                            %
+                          </Badge>
+                        </div>
+                        <Slider
+                          min={0}
+                          max={80}
+                          step={5}
+                          value={[
+                            typeof v.overlay_opacity === "number" ? v.overlay_opacity : 60,
+                          ]}
+                          onValueChange={([val]) =>
+                            updateDraft(def.slot, { overlay_opacity: val })
+                          }
+                        />
+                        {/* Live preview */}
+                        <div className="relative h-24 rounded-md overflow-hidden border">
+                          <img
+                            src={v.url}
+                            alt="overlay preview"
+                            className="w-full h-full object-cover"
+                          />
+                          <div
+                            className="absolute inset-0 bg-foreground"
+                            style={{
+                              opacity:
+                                Math.max(
+                                  0,
+                                  Math.min(
+                                    80,
+                                    typeof v.overlay_opacity === "number"
+                                      ? v.overlay_opacity
+                                      : 60,
+                                  ),
+                                ) / 100,
+                            }}
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="font-display font-bold text-background text-lg drop-shadow">
+                              Sample heading text
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {def.hasText && (
                       <div className="grid sm:grid-cols-2 gap-3 pt-2 border-t">
