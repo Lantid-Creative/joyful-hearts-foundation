@@ -285,12 +285,18 @@ const MediaUploader = ({
         ) : uploading ? (
           <div className="w-full max-w-sm space-y-2">
             <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-            <p className="text-sm font-medium">Uploading{previewMeta ? ` ${previewMeta.name}` : "..."}</p>
+            <p className="text-sm font-medium">
+              {progress < 15 && previewMeta ? "Optimizing" : "Uploading"}
+              {previewMeta ? ` ${previewMeta.name}` : "..."}
+            </p>
             {previewMeta && (
               <p className="text-xs text-muted-foreground">{formatBytes(previewMeta.size)}</p>
             )}
             <Progress value={progress} className="h-2" />
-            <p className="text-xs text-muted-foreground">{Math.round(progress)}%</p>
+            <p className="text-xs text-muted-foreground">
+              {Math.round(progress)}%
+              {progress < 15 ? " · resizing & converting to WebP" : ""}
+            </p>
           </div>
         ) : (
           <>
