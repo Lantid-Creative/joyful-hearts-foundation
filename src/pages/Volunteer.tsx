@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
+import PageHero from "@/components/shared/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -128,28 +129,17 @@ const Volunteer = () => {
   return (
     <Layout>
       <SEOHead title="Volunteer" description="Join RHRCI as a volunteer. Help empower rural children through education, mentorship, and community outreach in Anambra State, Nigeria." path="/volunteer" />
-      {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-hero text-background">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <div className="w-20 h-20 bg-background/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Heart className="w-10 h-10 text-background" />
-            </div>
-            <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-              Become a Volunteer
-            </h1>
-            <p className="text-background/90 font-body text-lg">
-              Join our team of dedicated volunteers and make a real difference in the lives of rural
-              children across Nigeria.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        slot="page_volunteer"
+        fallbackVariant="hero"
+        title="Become a Volunteer"
+        description="Join our team of dedicated volunteers and make a real difference in the lives of rural children across Nigeria."
+        icon={
+          <div className="w-20 h-20 bg-background/20 rounded-full flex items-center justify-center">
+            <Heart className="w-10 h-10 text-background" />
+          </div>
+        }
+      />
 
       {/* Benefits */}
       <section className="py-16 bg-background">

@@ -4,10 +4,12 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Heart, HandHeart, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSiteImage } from "@/hooks/useSiteImages";
 
 const CTASection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { image: bgImage } = useSiteImage("section_cta_bg");
 
   const cards = [
     {
@@ -37,8 +39,20 @@ const CTASection = () => {
   ];
 
   return (
-    <section ref={ref} className="py-20 bg-muted">
-      <div className="container mx-auto px-4">
+    <section ref={ref} className={`relative py-20 overflow-hidden ${bgImage?.url ? "" : "bg-muted"}`}>
+      {bgImage?.url && (
+        <div className="absolute inset-0">
+          <img
+            src={bgImage.url}
+            alt={bgImage.alt_text || "Get involved"}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="absolute inset-0 bg-foreground/70" />
+        </div>
+      )}
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -48,10 +62,10 @@ const CTASection = () => {
           <span className="text-secondary font-semibold font-body text-sm uppercase tracking-wider mb-2 block">
             Get Involved
           </span>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <h2 className={`font-display text-3xl md:text-4xl font-bold mb-4 ${bgImage?.url ? "text-background" : "text-foreground"}`}>
             How You Can Help
           </h2>
-          <p className="text-muted-foreground font-body max-w-2xl mx-auto">
+          <p className={`font-body max-w-2xl mx-auto ${bgImage?.url ? "text-background/90" : "text-muted-foreground"}`}>
             Together, we can create a brighter future for every rural child. 
             Choose how you'd like to make a difference today.
           </p>

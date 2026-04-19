@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
+import PageHero from "@/components/shared/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -137,28 +138,17 @@ const Partner = () => {
   return (
     <Layout>
       <SEOHead title="Partner With Us" description="Partner with RHRCI to create lasting impact for rural children. Explore corporate, NGO, and institutional partnership opportunities." path="/partner" />
-      {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-hero text-background">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <div className="w-20 h-20 bg-background/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Handshake className="w-10 h-10 text-background" />
-            </div>
-            <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-              Partner With Us
-            </h1>
-            <p className="text-background/90 font-body text-lg">
-              Together, we can create sustainable impact for rural children. Explore partnership
-              opportunities with RHRCI.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        slot="page_partner"
+        fallbackVariant="hero"
+        title="Partner With Us"
+        description="Together, we can create sustainable impact for rural children. Explore partnership opportunities with RHRCI."
+        icon={
+          <div className="w-20 h-20 bg-background/20 rounded-full flex items-center justify-center">
+            <Handshake className="w-10 h-10 text-background" />
+          </div>
+        }
+      />
 
       {/* Why Partner */}
       <section className="py-16 bg-background">

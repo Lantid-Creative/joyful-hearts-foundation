@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import villageLandscape from "@/assets/village-landscape.webp";
+import { useSiteImage } from "@/hooks/useSiteImages";
 
 const stats = [
   { value: "1203+", label: "Children Reached" },
@@ -13,14 +14,17 @@ const stats = [
 const ImpactStats = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { image: bgImage } = useSiteImage("section_impact_bg");
+  const bgUrl = bgImage?.url || villageLandscape;
+  const bgAlt = bgImage?.alt_text || "Rural village landscape";
 
   return (
     <section ref={ref} className="relative py-24 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <img
-          src={villageLandscape}
-          alt="Rural village landscape"
+          src={bgUrl}
+          alt={bgAlt}
           className="w-full h-full object-cover"
           loading="lazy"
           decoding="async"

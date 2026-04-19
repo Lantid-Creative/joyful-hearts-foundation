@@ -3,8 +3,10 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/shared/SEOHead";
+import PageHero from "@/components/shared/PageHero";
 import { Target, Eye, Heart, Users, Award, Globe } from "lucide-react";
-import girlReading from "@/assets/girl-reading.webp";
+import girlReadingDefault from "@/assets/girl-reading.webp";
+import { useSiteImage } from "@/hooks/useSiteImages";
 
 const aims = [
   "To promote the education and personal development of rural children.",
@@ -36,6 +38,8 @@ const values = [
 ];
 
 const About = () => {
+  const { image: missionImg } = useSiteImage("section_mission_image");
+  const girlReading = missionImg?.url || girlReadingDefault;
   const missionRef = useRef(null);
   const aimsRef = useRef(null);
   const objectivesRef = useRef(null);
@@ -51,28 +55,12 @@ const About = () => {
   return (
     <Layout>
       <SEOHead title="About Us" description="Learn about RHRCI's mission to empower rural children through education, rights advocacy, and cultural preservation in Anambra State, Nigeria." path="/about" />
-      {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-hope">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="text-secondary font-semibold font-body text-sm uppercase tracking-wider mb-2 block">
-              About Us
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Our Story & Mission
-            </h1>
-            <p className="text-muted-foreground font-body text-lg">
-              Learn about who we are, what drives us, and how we're making a difference 
-              in the lives of rural children across Nigeria.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        slot="page_about"
+        eyebrow="About Us"
+        title="Our Story & Mission"
+        description="Learn about who we are, what drives us, and how we're making a difference in the lives of rural children across Nigeria."
+      />
 
       {/* Mission & Vision */}
       <section ref={missionRef} className="py-20 bg-background">
