@@ -3,8 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, X, Image as ImageIcon, Film, Loader2, RefreshCw } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Upload, X, Image as ImageIcon, Film, Loader2, RefreshCw, FolderOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { compressImage, probeVideoDimensions, formatBytes } from "@/lib/imageCompression";
+import MediaPicker from "./MediaPicker";
 
 export type MediaUploaderKind = "image" | "video" | "any";
 
@@ -24,77 +27,12 @@ interface MediaUploaderProps {
   /** Hard max file size in MB. Defaults: 10MB image, 1024MB video. */
   maxSizeMB?: number;
   className?: string;
+  /** Show "Browse Library" button to pick from media_library. Default true. */
+  enableLibraryPicker?: boolean;
 }
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
 const VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime", "video/x-matroska"];
-
-const formatBytes = (bytes: number) => {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-  return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`;
-};
-
-/**
- * Compress an image client-side: resize to fit within maxDimension and re-encode as WebP.
- * Skips GIFs (to preserve animation) and AVIF (already efficient). Falls back to original on failure.
- */
-const compressImage = async (
-  file: File,
-  maxDimension = 1920,
-  quality = 0.82,
-): Promise<File> => {
-  if (file.type === "image/gif" || file.type === "image/avif") return file;
-  try {
-    const bitmap = await createImageBitmap(file).catch(() => null);
-    let width: number;
-    let height: number;
-    let source: CanvasImageSource;
-
-    if (bitmap) {
-      width = bitmap.width;
-      height = bitmap.height;
-      source = bitmap;
-    } else {
-      // Fallback via HTMLImageElement
-      const url = URL.createObjectURL(file);
-      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-        const i = new Image();
-        i.onload = () => resolve(i);
-        i.onerror = reject;
-        i.src = url;
-      });
-      URL.revokeObjectURL(url);
-      width = img.naturalWidth;
-      height = img.naturalHeight;
-      source = img;
-    }
-
-    const scale = Math.min(1, maxDimension / Math.max(width, height));
-    const targetW = Math.round(width * scale);
-    const targetH = Math.round(height * scale);
-
-    const canvas = document.createElement("canvas");
-    canvas.width = targetW;
-    canvas.height = targetH;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return file;
-    ctx.drawImage(source, 0, 0, targetW, targetH);
-
-    const blob: Blob | null = await new Promise((resolve) =>
-      canvas.toBlob((b) => resolve(b), "image/webp", quality),
-    );
-    if (!blob) return file;
-    // Only use compressed version if it's actually smaller
-    if (blob.size >= file.size && scale === 1) return file;
-
-    const baseName = file.name.replace(/\.[^.]+$/, "");
-    return new File([blob], `${baseName}.webp`, { type: "image/webp", lastModified: Date.now() });
-  } catch {
-    return file;
-  }
-};
 
 const MediaUploader = ({
   value,
@@ -107,13 +45,16 @@ const MediaUploader = ({
   recommendedWeight,
   maxSizeMB,
   className,
+  enableLibraryPicker = true,
 }: MediaUploaderProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [previewMeta, setPreviewMeta] = useState<{ size: number; name: string } | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   const acceptList =
     kind === "image" ? IMAGE_TYPES : kind === "video" ? VIDEO_TYPES : [...IMAGE_TYPES, ...VIDEO_TYPES];
@@ -125,7 +66,6 @@ const MediaUploader = ({
       if (!files || files.length === 0) return;
       const file = files[0];
 
-      // Validate type
       const isImage = file.type.startsWith("image/");
       const isVideo = file.type.startsWith("video/");
       if (kind === "image" && !isImage) {
@@ -141,7 +81,6 @@ const MediaUploader = ({
         return;
       }
 
-      // Validate size
       const sizeMB = file.size / 1024 / 1024;
       if (sizeMB > effectiveMaxMB) {
         toast({
@@ -156,18 +95,22 @@ const MediaUploader = ({
       setProgress(5);
       setPreviewMeta({ size: file.size, name: file.name });
 
-      // Compress images before upload (videos pass through)
       let uploadFile = file;
       let savedBytes = 0;
+      let width = 0;
+      let height = 0;
       if (isImage) {
-        const compressed = await compressImage(file, 1920, 0.82);
-        if (compressed !== file) {
-          savedBytes = file.size - compressed.size;
-          uploadFile = compressed;
-        }
+        const result = await compressImage(file, 1920, 0.82);
+        uploadFile = result.file;
+        savedBytes = result.savedBytes;
+        width = result.width;
+        height = result.height;
+      } else {
+        const dim = await probeVideoDimensions(file);
+        width = dim.width;
+        height = dim.height;
       }
 
-      // Simulated progress while upload runs (Supabase JS doesn't expose progress events for storage)
       const tick = setInterval(() => {
         setProgress((p) => (p < 90 ? p + Math.max(1, (90 - p) * 0.08) : p));
       }, 200);
@@ -191,6 +134,21 @@ const MediaUploader = ({
       }
 
       const { data } = supabase.storage.from("media").getPublicUrl(path);
+
+      // Register in central media library (best-effort, non-blocking on error)
+      await supabase.from("media_library").insert({
+        url: data.publicUrl,
+        storage_path: path,
+        type: isVideo ? "video" : "image",
+        mime_type: uploadFile.type,
+        file_name: file.name,
+        file_size: uploadFile.size,
+        width: width || null,
+        height: height || null,
+        folder,
+        uploaded_by: user?.id || null,
+      });
+
       setProgress(100);
       setTimeout(() => {
         setUploading(false);
@@ -199,15 +157,13 @@ const MediaUploader = ({
 
       onChange(data.publicUrl, isVideo ? "video" : "image");
       const savingsNote =
-        savedBytes > 0
-          ? ` · optimized, saved ${formatBytes(savedBytes)}`
-          : "";
+        savedBytes > 0 ? ` · optimized, saved ${formatBytes(savedBytes)}` : "";
       toast({
         title: "Uploaded",
         description: `${uploadFile.name} (${formatBytes(uploadFile.size)})${savingsNote}`,
       });
     },
-    [folder, kind, effectiveMaxMB, onChange, toast],
+    [folder, kind, effectiveMaxMB, onChange, toast, user?.id],
   );
 
   const onDrop = useCallback(
@@ -220,6 +176,7 @@ const MediaUploader = ({
   );
 
   const hasPreview = !!value;
+  const pickerKind = kind === "any" ? undefined : kind;
 
   return (
     <div className={cn("space-y-2", className)}>
@@ -267,6 +224,19 @@ const MediaUploader = ({
               >
                 <RefreshCw className="w-4 h-4 mr-1" /> Replace
               </Button>
+              {enableLibraryPicker && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPickerOpen(true);
+                  }}
+                >
+                  <FolderOpen className="w-4 h-4 mr-1" /> Library
+                </Button>
+              )}
               {onClear && (
                 <Button
                   type="button"
@@ -315,6 +285,19 @@ const MediaUploader = ({
                 {effectiveMaxMB >= 1024 ? `${(effectiveMaxMB / 1024).toFixed(0)} GB` : `${effectiveMaxMB} MB`}
               </p>
             </div>
+            {enableLibraryPicker && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPickerOpen(true);
+                }}
+              >
+                <FolderOpen className="w-4 h-4 mr-1" /> Browse Library
+              </Button>
+            )}
             {(recommendedSize || recommendedWeight) && (
               <div className="text-xs text-muted-foreground border-t pt-2 mt-1 w-full max-w-xs">
                 <div className="flex items-center justify-center gap-1.5">
@@ -328,6 +311,15 @@ const MediaUploader = ({
           </>
         )}
       </div>
+
+      {enableLibraryPicker && (
+        <MediaPicker
+          open={pickerOpen}
+          onOpenChange={setPickerOpen}
+          kind={pickerKind}
+          onSelect={(item) => onChange(item.url, item.type)}
+        />
+      )}
     </div>
   );
 };
