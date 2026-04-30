@@ -135,6 +135,33 @@ const SiteImagesManager = () => {
     setSavingSlot(null);
   };
 
+  const resetSlot = async (def: SlotDef) => {
+    if (!rows[def.slot]) {
+      // Just clear the unsaved draft
+      setDrafts((d) => {
+        const n = { ...d };
+        delete n[def.slot];
+        return n;
+      });
+      return;
+    }
+    if (!confirm(`Reset ${def.label} to the default image? This removes the custom upload.`)) return;
+    setSavingSlot(def.slot);
+    const { error } = await supabase.from("site_images").delete().eq("slot", def.slot);
+    if (error) {
+      toast({ title: "Reset failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Reset", description: `${def.label} now uses the default.` });
+      setDrafts((d) => {
+        const n = { ...d };
+        delete n[def.slot];
+        return n;
+      });
+      await fetchAll();
+    }
+    setSavingSlot(null);
+  };
+
   const grouped = useMemo(() => {
     const g: Record<string, SlotDef[]> = {};
     SLOTS.forEach((s) => {
