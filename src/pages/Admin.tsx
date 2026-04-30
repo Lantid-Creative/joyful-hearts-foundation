@@ -565,6 +565,16 @@ const Admin = () => {
             </motion.div>
           )}
 
+          {/* Media Library Tab */}
+          {activeTab === "media-library" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <MediaLibraryManager />
+            </motion.div>
+          )}
+
           {/* Site Images Tab */}
           {activeTab === "site-images" && (
             <motion.div
