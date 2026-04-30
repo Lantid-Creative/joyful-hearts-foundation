@@ -8,7 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Save, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Save, Image as ImageIcon, Loader2, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MediaUploader from "./MediaUploader";
 
