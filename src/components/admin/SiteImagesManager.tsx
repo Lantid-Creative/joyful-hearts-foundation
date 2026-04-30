@@ -8,7 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Save, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Save, Image as ImageIcon, Loader2, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MediaUploader from "./MediaUploader";
 
@@ -135,6 +135,33 @@ const SiteImagesManager = () => {
     setSavingSlot(null);
   };
 
+  const resetSlot = async (def: SlotDef) => {
+    if (!rows[def.slot]) {
+      // Just clear the unsaved draft
+      setDrafts((d) => {
+        const n = { ...d };
+        delete n[def.slot];
+        return n;
+      });
+      return;
+    }
+    if (!confirm(`Reset ${def.label} to the default image? This removes the custom upload.`)) return;
+    setSavingSlot(def.slot);
+    const { error } = await supabase.from("site_images").delete().eq("slot", def.slot);
+    if (error) {
+      toast({ title: "Reset failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Reset", description: `${def.label} now uses the default.` });
+      setDrafts((d) => {
+        const n = { ...d };
+        delete n[def.slot];
+        return n;
+      });
+      await fetchAll();
+    }
+    setSavingSlot(null);
+  };
+
   const grouped = useMemo(() => {
     const g: Record<string, SlotDef[]> = {};
     SLOTS.forEach((s) => {
@@ -199,18 +226,30 @@ const SiteImagesManager = () => {
                           Slot: <code className="text-xs">{def.slot}</code>
                         </CardDescription>
                       </div>
-                      <Button
-                        size="sm"
-                        onClick={() => saveSlot(def)}
-                        disabled={savingSlot === def.slot || !v.url}
-                      >
-                        {savingSlot === def.slot ? (
-                          <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                        ) : (
-                          <Save className="w-4 h-4 mr-1" />
-                        )}
-                        Save
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => resetSlot(def)}
+                          disabled={savingSlot === def.slot || (!rows[def.slot] && !drafts[def.slot])}
+                          title="Remove custom image and restore default"
+                        >
+                          <RotateCcw className="w-4 h-4 mr-1" />
+                          Reset
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => saveSlot(def)}
+                          disabled={savingSlot === def.slot || !v.url}
+                        >
+                          {savingSlot === def.slot ? (
+                            <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                          ) : (
+                            <Save className="w-4 h-4 mr-1" />
+                          )}
+                          Save
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">

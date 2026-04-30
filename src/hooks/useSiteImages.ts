@@ -27,6 +27,7 @@ export const useSiteImage = (slot: string) => {
         .from("site_images")
         .select("*")
         .eq("slot", slot)
+        .eq("is_active", true)
         .maybeSingle();
       if (!cancelled) {
         setImage((data as SiteImage) || null);
