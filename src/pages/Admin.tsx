@@ -31,6 +31,7 @@ import {
   RefreshCw,
   FileText,
   Image,
+  FolderOpen,
   Shield,
   Calendar,
   
@@ -45,6 +46,7 @@ import EventManager from "@/components/admin/EventManager";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import SiteImagesManager from "@/components/admin/SiteImagesManager";
 import ProgramImagesManager from "@/components/admin/ProgramImagesManager";
+import MediaLibraryManager from "@/components/admin/MediaLibraryManager";
 
 interface Donation {
   id: string;
@@ -271,6 +273,7 @@ const Admin = () => {
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "media-library", label: "Media Library", icon: FolderOpen },
     { id: "blog", label: "Blog Posts", icon: FileText },
     { id: "gallery", label: "Gallery Media", icon: Image },
     { id: "site-images", label: "Site Images", icon: Image },
@@ -559,6 +562,16 @@ const Admin = () => {
               animate={{ opacity: 1, y: 0 }}
             >
               <GalleryManager media={galleryMedia} onRefresh={fetchData} />
+            </motion.div>
+          )}
+
+          {/* Media Library Tab */}
+          {activeTab === "media-library" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <MediaLibraryManager />
             </motion.div>
           )}
 

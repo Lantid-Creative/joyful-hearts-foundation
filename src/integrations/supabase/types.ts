@@ -220,6 +220,63 @@ export type Database = {
         }
         Relationships: []
       }
+      media_library: {
+        Row: {
+          alt_text: string | null
+          caption: string | null
+          created_at: string
+          file_name: string
+          file_size: number | null
+          folder: string | null
+          height: number | null
+          id: string
+          mime_type: string | null
+          storage_path: string | null
+          tags: string[] | null
+          type: string
+          updated_at: string
+          uploaded_by: string | null
+          url: string
+          width: number | null
+        }
+        Insert: {
+          alt_text?: string | null
+          caption?: string | null
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          folder?: string | null
+          height?: number | null
+          id?: string
+          mime_type?: string | null
+          storage_path?: string | null
+          tags?: string[] | null
+          type?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          url: string
+          width?: number | null
+        }
+        Update: {
+          alt_text?: string | null
+          caption?: string | null
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          folder?: string | null
+          height?: number | null
+          id?: string
+          mime_type?: string | null
+          storage_path?: string | null
+          tags?: string[] | null
+          type?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          url?: string
+          width?: number | null
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           created_at: string
