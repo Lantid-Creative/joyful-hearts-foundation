@@ -31,6 +31,7 @@ import {
   RefreshCw,
   FileText,
   Image,
+  FolderOpen,
   Shield,
   Calendar,
   
