@@ -83,23 +83,52 @@ const Gallery = () => {
 
   useEffect(() => {
     const fetchGalleryMedia = async () => {
-      const { data, error } = await supabase
-        .from("gallery_media")
-        .select("*")
-        .eq("is_active", true)
-        .order("display_order", { ascending: true });
+      const [galleryRes, libraryRes] = await Promise.all([
+        supabase
+          .from("gallery_media")
+          .select("*")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true }),
+        supabase
+          .from("media_library")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(500),
+      ]);
 
-      if (!error && data && data.length > 0) {
-        const dbItems: MediaItem[] = data.map((item) => ({
-          id: item.id,
-          type: item.type as "image" | "video",
-          src: item.url,
-          thumbnail: item.thumbnail_url || item.url,
-          title: item.title,
-          category: item.category,
-        }));
-        setGalleryItems([...dbItems, ...defaultGalleryItems]);
-      }
+      const galleryItemsDb: MediaItem[] =
+        !galleryRes.error && galleryRes.data
+          ? galleryRes.data.map((item) => ({
+              id: `gm-${item.id}`,
+              type: item.type as "image" | "video",
+              src: item.url,
+              thumbnail: item.thumbnail_url || item.url,
+              title: item.title,
+              category: item.category,
+            }))
+          : [];
+
+      // Avoid duplicates: skip library items whose URL already exists in gallery_media
+      const existingUrls = new Set(galleryItemsDb.map((g) => g.src));
+
+      const libraryItems: MediaItem[] =
+        !libraryRes.error && libraryRes.data
+          ? libraryRes.data
+              .filter((m) => !existingUrls.has(m.url))
+              .map((m) => ({
+                id: `ml-${m.id}`,
+                type: (m.type === "video" ? "video" : "image") as "image" | "video",
+                src: m.url,
+                thumbnail: m.url,
+                title: m.alt_text || m.caption || m.file_name || "Media",
+                category:
+                  (m.tags && m.tags.length > 0 ? m.tags[0] : null) ||
+                  (m.folder && m.folder !== "library" ? m.folder : "General"),
+              }))
+          : [];
+
+      const combined = [...galleryItemsDb, ...libraryItems];
+      setGalleryItems(combined.length > 0 ? combined : defaultGalleryItems);
       setLoading(false);
     };
 
