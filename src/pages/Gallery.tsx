@@ -311,10 +311,17 @@ const Gallery = () => {
               className="max-w-5xl w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              {selectedItem.type === "image" && (
+              {selectedItem.type === "image" ? (
                 <img
                   src={selectedItem.src}
                   alt={selectedItem.title}
+                  className="w-full rounded-lg shadow-elevated"
+                />
+              ) : (
+                <video
+                  src={selectedItem.src}
+                  controls
+                  autoPlay
                   className="w-full rounded-lg shadow-elevated"
                 />
               )}
