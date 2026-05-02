@@ -90,6 +90,10 @@ const MediaLibraryManager = () => {
   const filtered = useMemo(() => {
     return items.filter((it) => {
       if (filter !== "all" && it.type !== filter) return false;
+      if (categoryFilter !== "all") {
+        const cat = (it.tags && it.tags[0]) || "General";
+        if (cat !== categoryFilter) return false;
+      }
       if (search) {
         const s = search.toLowerCase();
         const hay = `${it.file_name} ${it.alt_text || ""} ${it.caption || ""} ${(it.tags || []).join(" ")}`.toLowerCase();
@@ -97,7 +101,7 @@ const MediaLibraryManager = () => {
       }
       return true;
     });
-  }, [items, search, filter]);
+  }, [items, search, filter, categoryFilter]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((s) => {
