@@ -268,11 +268,39 @@ const MediaLibraryManager = () => {
               <SelectItem value="video">Videos</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All categories</SelectItem>
+              {GALLERY_CATEGORIES.map((c) => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Badge variant="outline">
             {filtered.length} of {items.length} · {formatBytes(totalSize)} total
           </Badge>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {selectedIds.size > 0 && (
+            <div className="flex gap-1 items-center">
+              <Select value={bulkCategory} onValueChange={setBulkCategory}>
+                <SelectTrigger className="w-36 h-9">
+                  <SelectValue placeholder="Set category…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {GALLERY_CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button size="sm" variant="secondary" disabled={!bulkCategory} onClick={applyBulkCategory}>
+                Apply
+              </Button>
+            </div>
+          )}
           {filtered.length > 0 && (
             <Button size="sm" variant="outline" onClick={toggleSelectAll}>
               {selectedIds.size === filtered.length ? "Deselect all" : "Select all"}
