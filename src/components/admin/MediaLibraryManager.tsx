@@ -159,20 +159,26 @@ const MediaLibraryManager = () => {
 
   const openEdit = (item: LibraryItem) => {
     setEditing(item);
+    const existingTags = item.tags || [];
+    const cat = existingTags[0] && GALLERY_CATEGORIES.includes(existingTags[0]) ? existingTags[0] : "General";
+    const restTags = existingTags.filter((t) => t !== cat);
     setEditForm({
       alt_text: item.alt_text || "",
       caption: item.caption || "",
-      tags: (item.tags || []).join(", "),
+      tags: restTags.join(", "),
+      category: cat,
     });
   };
 
   const saveEdit = async () => {
     if (!editing) return;
     setSaving(true);
-    const tagsArr = editForm.tags
+    const restTags = editForm.tags
       .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
+    // Always store category as the FIRST tag so the gallery picks it up.
+    const tagsArr = [editForm.category, ...restTags.filter((t) => t !== editForm.category)];
     const { error } = await supabase
       .from("media_library")
       .update({
@@ -195,6 +201,34 @@ const MediaLibraryManager = () => {
       setEditing(null);
     }
     setSaving(false);
+  };
+
+  const applyBulkCategory = async () => {
+    if (!bulkCategory || selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    const updates = items
+      .filter((i) => selectedIds.has(i.id))
+      .map((i) => {
+        const rest = (i.tags || []).filter((t) => !GALLERY_CATEGORIES.includes(t));
+        const newTags = [bulkCategory, ...rest];
+        return supabase.from("media_library").update({ tags: newTags }).eq("id", i.id);
+      });
+    const results = await Promise.all(updates);
+    const failed = results.filter((r) => r.error).length;
+    if (failed) {
+      toast({ title: "Some updates failed", description: `${failed} of ${ids.length}`, variant: "destructive" });
+    } else {
+      toast({ title: "Categorized", description: `${ids.length} item(s) → ${bulkCategory}` });
+    }
+    setItems((arr) =>
+      arr.map((i) => {
+        if (!selectedIds.has(i.id)) return i;
+        const rest = (i.tags || []).filter((t) => !GALLERY_CATEGORIES.includes(t));
+        return { ...i, tags: [bulkCategory, ...rest] };
+      }),
+    );
+    setSelectedIds(new Set());
+    setBulkCategory("");
   };
 
   const totalSize = useMemo(
