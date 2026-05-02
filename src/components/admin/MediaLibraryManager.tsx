@@ -435,11 +435,26 @@ const MediaLibraryManager = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Tags (comma separated)</Label>
+                <Label>Gallery category</Label>
+                <Select
+                  value={editForm.category}
+                  onValueChange={(v) => setEditForm((f) => ({ ...f, category: v }))}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {GALLERY_CATEGORIES.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Controls which tab this asset appears under on the public Gallery.</p>
+              </div>
+              <div className="space-y-2">
+                <Label>Extra tags (comma separated)</Label>
                 <Input
                   value={editForm.tags}
                   onChange={(e) => setEditForm((f) => ({ ...f, tags: e.target.value }))}
-                  placeholder="education, children, lagos"
+                  placeholder="children, lagos, 2025"
                 />
               </div>
             </div>
