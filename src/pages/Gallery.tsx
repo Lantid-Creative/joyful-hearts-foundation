@@ -5,12 +5,6 @@ import SEOHead from "@/components/shared/SEOHead";
 import PageHero from "@/components/shared/PageHero";
 import { Play, X, Image as ImageIcon, Film } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import heroChildren from "@/assets/hero-children.webp";
-import girlReading from "@/assets/girl-reading.webp";
-import communityOutreach from "@/assets/community-outreach.webp";
-import culturalGames from "@/assets/cultural-games.webp";
-import distribution from "@/assets/distribution.webp";
-import villageLandscape from "@/assets/village-landscape.webp";
 
 type MediaItem = {
   id: string;
@@ -21,61 +15,10 @@ type MediaItem = {
   category: string;
 };
 
-// Default gallery items (used as fallback)
-const defaultGalleryItems: MediaItem[] = [
-  {
-    id: "1",
-    type: "image",
-    src: heroChildren,
-    thumbnail: heroChildren,
-    title: "Children in Classroom",
-    category: "Education",
-  },
-  {
-    id: "2",
-    type: "image",
-    src: girlReading,
-    thumbnail: girlReading,
-    title: "Girl Reading",
-    category: "Education",
-  },
-  {
-    id: "3",
-    type: "image",
-    src: communityOutreach,
-    thumbnail: communityOutreach,
-    title: "Community Outreach",
-    category: "Health",
-  },
-  {
-    id: "4",
-    type: "image",
-    src: culturalGames,
-    thumbnail: culturalGames,
-    title: "Traditional Games",
-    category: "Culture",
-  },
-  {
-    id: "5",
-    type: "image",
-    src: distribution,
-    thumbnail: distribution,
-    title: "Materials Distribution",
-    category: "Education",
-  },
-  {
-    id: "6",
-    type: "image",
-    src: villageLandscape,
-    thumbnail: villageLandscape,
-    title: "Our Community",
-    category: "Community",
-  },
-];
 
 const Gallery = () => {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
-  const [galleryItems, setGalleryItems] = useState<MediaItem[]>(defaultGalleryItems);
+  const [galleryItems, setGalleryItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -125,7 +68,7 @@ const Gallery = () => {
           : [];
 
       const combined = [...galleryItemsDb, ...libraryItems];
-      setGalleryItems(combined.length > 0 ? combined : defaultGalleryItems);
+      setGalleryItems(combined);
       setLoading(false);
     };
 
