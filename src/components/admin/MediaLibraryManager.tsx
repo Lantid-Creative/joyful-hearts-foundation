@@ -61,8 +61,12 @@ const MediaLibraryManager = () => {
   const [filter, setFilter] = useState<"all" | "image" | "video">("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<LibraryItem | null>(null);
-  const [editForm, setEditForm] = useState({ alt_text: "", caption: "", tags: "" });
+  const [editForm, setEditForm] = useState({ alt_text: "", caption: "", tags: "", category: "General" });
   const [saving, setSaving] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [bulkCategory, setBulkCategory] = useState<string>("");
+
+  const GALLERY_CATEGORIES = ["General", "Education", "Health", "Culture", "Community", "Events"];
 
   const fetchAll = async () => {
     setLoading(true);
@@ -86,6 +90,10 @@ const MediaLibraryManager = () => {
   const filtered = useMemo(() => {
     return items.filter((it) => {
       if (filter !== "all" && it.type !== filter) return false;
+      if (categoryFilter !== "all") {
+        const cat = (it.tags && it.tags[0]) || "General";
+        if (cat !== categoryFilter) return false;
+      }
       if (search) {
         const s = search.toLowerCase();
         const hay = `${it.file_name} ${it.alt_text || ""} ${it.caption || ""} ${(it.tags || []).join(" ")}`.toLowerCase();
@@ -93,7 +101,7 @@ const MediaLibraryManager = () => {
       }
       return true;
     });
-  }, [items, search, filter]);
+  }, [items, search, filter, categoryFilter]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((s) => {
@@ -151,20 +159,26 @@ const MediaLibraryManager = () => {
 
   const openEdit = (item: LibraryItem) => {
     setEditing(item);
+    const existingTags = item.tags || [];
+    const cat = existingTags[0] && GALLERY_CATEGORIES.includes(existingTags[0]) ? existingTags[0] : "General";
+    const restTags = existingTags.filter((t) => t !== cat);
     setEditForm({
       alt_text: item.alt_text || "",
       caption: item.caption || "",
-      tags: (item.tags || []).join(", "),
+      tags: restTags.join(", "),
+      category: cat,
     });
   };
 
   const saveEdit = async () => {
     if (!editing) return;
     setSaving(true);
-    const tagsArr = editForm.tags
+    const restTags = editForm.tags
       .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
+    // Always store category as the FIRST tag so the gallery picks it up.
+    const tagsArr = [editForm.category, ...restTags.filter((t) => t !== editForm.category)];
     const { error } = await supabase
       .from("media_library")
       .update({
@@ -187,6 +201,34 @@ const MediaLibraryManager = () => {
       setEditing(null);
     }
     setSaving(false);
+  };
+
+  const applyBulkCategory = async () => {
+    if (!bulkCategory || selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    const updates = items
+      .filter((i) => selectedIds.has(i.id))
+      .map((i) => {
+        const rest = (i.tags || []).filter((t) => !GALLERY_CATEGORIES.includes(t));
+        const newTags = [bulkCategory, ...rest];
+        return supabase.from("media_library").update({ tags: newTags }).eq("id", i.id);
+      });
+    const results = await Promise.all(updates);
+    const failed = results.filter((r) => r.error).length;
+    if (failed) {
+      toast({ title: "Some updates failed", description: `${failed} of ${ids.length}`, variant: "destructive" });
+    } else {
+      toast({ title: "Categorized", description: `${ids.length} item(s) → ${bulkCategory}` });
+    }
+    setItems((arr) =>
+      arr.map((i) => {
+        if (!selectedIds.has(i.id)) return i;
+        const rest = (i.tags || []).filter((t) => !GALLERY_CATEGORIES.includes(t));
+        return { ...i, tags: [bulkCategory, ...rest] };
+      }),
+    );
+    setSelectedIds(new Set());
+    setBulkCategory("");
   };
 
   const totalSize = useMemo(
@@ -226,11 +268,39 @@ const MediaLibraryManager = () => {
               <SelectItem value="video">Videos</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All categories</SelectItem>
+              {GALLERY_CATEGORIES.map((c) => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Badge variant="outline">
             {filtered.length} of {items.length} · {formatBytes(totalSize)} total
           </Badge>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {selectedIds.size > 0 && (
+            <div className="flex gap-1 items-center">
+              <Select value={bulkCategory} onValueChange={setBulkCategory}>
+                <SelectTrigger className="w-36 h-9">
+                  <SelectValue placeholder="Set category…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {GALLERY_CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button size="sm" variant="secondary" disabled={!bulkCategory} onClick={applyBulkCategory}>
+                Apply
+              </Button>
+            </div>
+          )}
           {filtered.length > 0 && (
             <Button size="sm" variant="outline" onClick={toggleSelectAll}>
               {selectedIds.size === filtered.length ? "Deselect all" : "Select all"}
@@ -319,10 +389,14 @@ const MediaLibraryManager = () => {
                 </div>
                 <div className="p-2 text-xs space-y-0.5">
                   <p className="font-medium truncate" title={item.file_name}>{item.file_name}</p>
-                  <p className="text-muted-foreground">
-                    {item.width && item.height ? `${item.width}×${item.height}` : "—"}
-                    {item.file_size ? ` · ${formatBytes(item.file_size)}` : ""}
-                  </p>
+                  <div className="flex items-center justify-between gap-1">
+                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-normal truncate max-w-full">
+                      {(item.tags && item.tags[0]) || "General"}
+                    </Badge>
+                    <span className="text-muted-foreground text-[10px] shrink-0">
+                      {item.width && item.height ? `${item.width}×${item.height}` : ""}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
@@ -361,11 +435,26 @@ const MediaLibraryManager = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Tags (comma separated)</Label>
+                <Label>Gallery category</Label>
+                <Select
+                  value={editForm.category}
+                  onValueChange={(v) => setEditForm((f) => ({ ...f, category: v }))}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {GALLERY_CATEGORIES.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Controls which tab this asset appears under on the public Gallery.</p>
+              </div>
+              <div className="space-y-2">
+                <Label>Extra tags (comma separated)</Label>
                 <Input
                   value={editForm.tags}
                   onChange={(e) => setEditForm((f) => ({ ...f, tags: e.target.value }))}
-                  placeholder="education, children, lagos"
+                  placeholder="children, lagos, 2025"
                 />
               </div>
             </div>
