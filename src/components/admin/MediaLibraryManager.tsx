@@ -389,10 +389,14 @@ const MediaLibraryManager = () => {
                 </div>
                 <div className="p-2 text-xs space-y-0.5">
                   <p className="font-medium truncate" title={item.file_name}>{item.file_name}</p>
-                  <p className="text-muted-foreground">
-                    {item.width && item.height ? `${item.width}×${item.height}` : "—"}
-                    {item.file_size ? ` · ${formatBytes(item.file_size)}` : ""}
-                  </p>
+                  <div className="flex items-center justify-between gap-1">
+                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-normal truncate max-w-full">
+                      {(item.tags && item.tags[0]) || "General"}
+                    </Badge>
+                    <span className="text-muted-foreground text-[10px] shrink-0">
+                      {item.width && item.height ? `${item.width}×${item.height}` : ""}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
