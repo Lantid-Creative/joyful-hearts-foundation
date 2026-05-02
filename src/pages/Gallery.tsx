@@ -73,10 +73,7 @@ const defaultGalleryItems: MediaItem[] = [
   },
 ];
 
-const categories = ["All", "Education", "Health", "Culture", "Community", "Events", "General"];
-
 const Gallery = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
   const [galleryItems, setGalleryItems] = useState<MediaItem[]>(defaultGalleryItems);
   const [loading, setLoading] = useState(true);
@@ -135,10 +132,7 @@ const Gallery = () => {
     fetchGalleryMedia();
   }, []);
 
-  const filteredItems =
-    selectedCategory === "All"
-      ? galleryItems
-      : galleryItems.filter((item) => item.category === selectedCategory);
+  const filteredItems = galleryItems;
 
   return (
     <Layout>
@@ -149,27 +143,6 @@ const Gallery = () => {
         title="Gallery"
         description="Explore moments of joy, learning, and transformation from our programs and community activities."
       />
-
-      {/* Filter Tabs */}
-      <section className="py-8 bg-background border-b border-border">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center gap-3">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-2 rounded-full font-body text-sm font-medium transition-all ${
-                  selectedCategory === category
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Gallery Grid */}
       <section className="py-16 bg-background">
