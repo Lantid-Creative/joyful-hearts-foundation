@@ -61,8 +61,12 @@ const MediaLibraryManager = () => {
   const [filter, setFilter] = useState<"all" | "image" | "video">("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<LibraryItem | null>(null);
-  const [editForm, setEditForm] = useState({ alt_text: "", caption: "", tags: "" });
+  const [editForm, setEditForm] = useState({ alt_text: "", caption: "", tags: "", category: "General" });
   const [saving, setSaving] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [bulkCategory, setBulkCategory] = useState<string>("");
+
+  const GALLERY_CATEGORIES = ["General", "Education", "Health", "Culture", "Community", "Events"];
 
   const fetchAll = async () => {
     setLoading(true);
