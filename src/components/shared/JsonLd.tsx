@@ -1,7 +1,7 @@
 const JsonLd = () => {
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "NonprofitOrganization",
+    "@type": "NGO",
     name: "Raising the Hope of Rural Children Initiative",
     alternateName: "RHRCI",
     url: "https://heart-of-joy-ng.lovable.app",
