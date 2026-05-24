@@ -58,7 +58,7 @@ const Blog = () => {
 
   return (
     <Layout>
-      <SEOHead title="Blog" description="Read stories of impact, program updates, and insights from RHRCI's work empowering rural children in Nigeria." path="/blog" type="blog" />
+      <SEOHead title="Blog" description="Read stories of impact, program updates, and insights from RHRCI's work empowering rural children in Nigeria." path="/blog" type="website" />
       <PageHero
         slot="page_blog"
         eyebrow="News & Updates"

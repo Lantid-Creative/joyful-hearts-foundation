@@ -1,0 +1,24 @@
+# RHRCI — Raising the Hope of Rural Children Initiative
+
+> A Nigerian non-profit empowering rural children through education, health awareness, cultural values, and rights advocacy. From the village to the world: bridging dreams, unlocking potentials.
+
+## Pages
+
+- [Home](/): Overview of RHRCI's mission, impact, and programs.
+- [About](/about): Our story, vision, mission, leadership, and values.
+- [Programs](/programs): Education, health, cultural, and advocacy initiatives for rural children.
+- [Events](/events): Upcoming and past RHRCI events and outreach activities.
+- [Blog](/blog): Stories of impact, program updates, and field insights.
+- [Gallery](/gallery): Photos and videos from our programs and communities.
+- [Donate](/donate): Support our work via online giving or bank transfer (Naira).
+- [Volunteer](/volunteer): Join our team of volunteers serving rural communities.
+- [Partner](/partner): Partnership opportunities for organisations and institutions.
+- [Contact](/contact): Get in touch with the RHRCI team.
+
+## Programs
+
+- [Education Support](/programs/education-support): Scholarships, school supplies, and learning resources for rural pupils.
+- [Menstrual Hygiene](/programs/menstrual-hygiene): Awareness and supplies to keep girls in school.
+- [Children's Rights](/programs/childrens-rights): Advocacy and protection programs for vulnerable children.
+- [Cultural Development](/programs/cultural-development): Preserving heritage through games, language, and the arts.
+- [Safe Haven](/programs/safe-haven): Protective spaces for at-risk children.

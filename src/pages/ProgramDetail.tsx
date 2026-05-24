@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/shared/SEOHead";
 import DonationProgress from "@/components/shared/DonationProgress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -142,6 +143,30 @@ const ProgramDetail = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title={program.title}
+        description={(program.short_description || program.full_description || "").slice(0, 155)}
+        path={`/programs/${program.slug}`}
+        image={program.hero_image_url || undefined}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: program.title,
+            description: program.short_description || program.full_description,
+            provider: {
+              "@type": "NGO",
+              name: "Raising the Hope of Rural Children Initiative",
+              url: "https://heart-of-joy-ng.lovable.app",
+            },
+            url: `https://heart-of-joy-ng.lovable.app/programs/${program.slug}`,
+            image: program.hero_image_url || undefined,
+          }),
+        }}
+      />
       {/* Hero */}
       <section className={`relative py-24 ${program.color}`}>
         <div className="container mx-auto px-4">

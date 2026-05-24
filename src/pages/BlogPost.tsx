@@ -92,6 +92,27 @@ const BlogPostPage = () => {
         image={post.featured_image || undefined}
         type="article"
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: post.title,
+            description: post.excerpt || undefined,
+            image: post.featured_image || undefined,
+            datePublished: post.published_at || post.created_at,
+            author: post.author_name
+              ? { "@type": "Person", name: post.author_name }
+              : { "@type": "Organization", name: "RHRCI" },
+            publisher: {
+              "@type": "NGO",
+              name: "Raising the Hope of Rural Children Initiative",
+            },
+            mainEntityOfPage: `https://heart-of-joy-ng.lovable.app/blog/${post.slug}`,
+          }),
+        }}
+      />
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-hope">
         <div className="container mx-auto px-4">
