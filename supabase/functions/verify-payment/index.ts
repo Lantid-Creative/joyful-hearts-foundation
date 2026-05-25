@@ -39,30 +39,32 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     if (verifyData.data?.status === "success") {
-      await supabase
+      // Idempotent transition: only flip pending -> completed once.
+      // If the row was already completed (or doesn't exist), we skip the
+      // counter increment entirely so repeated calls cannot inflate totals.
+      const { data: updatedRows } = await supabase
         .from("donations")
         .update({ payment_status: "completed" })
-        .eq("payment_reference", reference);
-
-      // Update program raised amount if linked to a program
-      const { data: donation } = await supabase
-        .from("donations")
-        .select("program_id, amount")
         .eq("payment_reference", reference)
-        .single();
+        .eq("payment_status", "pending")
+        .select("program_id, amount");
 
-      if (donation?.program_id) {
+      const justCompleted = updatedRows && updatedRows.length > 0
+        ? updatedRows[0]
+        : null;
+
+      if (justCompleted?.program_id) {
         const { data: program } = await supabase
           .from("programs")
           .select("raised")
-          .eq("id", donation.program_id)
+          .eq("id", justCompleted.program_id)
           .single();
 
         if (program) {
           await supabase
             .from("programs")
-            .update({ raised: Number(program.raised) + donation.amount })
-            .eq("id", donation.program_id);
+            .update({ raised: Number(program.raised) + Number(justCompleted.amount) })
+            .eq("id", justCompleted.program_id);
         }
       }
 
@@ -71,10 +73,12 @@ Deno.serve(async (req) => {
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     } else {
+      // Only mark as failed if still pending — never overwrite a completed donation.
       await supabase
         .from("donations")
         .update({ payment_status: "failed" })
-        .eq("payment_reference", reference);
+        .eq("payment_reference", reference)
+        .eq("payment_status", "pending");
 
       return new Response(
         JSON.stringify({ status: "failed", message: "Payment verification failed" }),
